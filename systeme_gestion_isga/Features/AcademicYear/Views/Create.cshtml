@@ -1,0 +1,75 @@
+﻿
+@model systeme_gestion_isga.Features.AcademicYear.ViewModels.AcademicYearVM
+
+
+@{
+    ViewBag.Title = "Create an Academic Year";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex align-content-center justify-content-between mb-5">
+        <h4 class="fw-bold text-white mb-0">Create An Academic Year</h4>
+        <a href='@Url.Action("Index")' class="btn btn-outline-light">
+            <i data-lucide="arrow-left"></i>
+            Back
+        </a>
+    </div>
+    <div class="card border bg-body-tertiary">
+        <div class="card-body p-4">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="col-md-6">
+                    <label class="form-label text-white">Name</label>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "name..." })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger small" })
+                </div>
+
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">Start Date</label>
+                    @Html.TextBoxFor(
+                        m => m.StartDate,
+                        "{0:yyyy-MM-dd}",
+                        new { @class = "form-control", type = "date" }
+                    )
+                    @Html.ValidationMessageFor(m => m.StartDate, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">End Date</label>
+                    @Html.TextBoxFor(
+                        m => m.EndDate,
+                        "{0:yyyy-MM-dd}",
+                        new { @class = "form-control", type = "date" }
+                    )
+                    @Html.ValidationMessageFor(m => m.EndDate, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6 d-flex flex-column">
+                    <label class="form-label text-white">Is Active</label>
+                    <div class="form-check form-switch flex-grow-1 mt-2">
+                        @Html.CheckBoxFor(m => m.IsActive, new { @class = "form-check-input", id = "IsActive" })
+                        <label class="form-check-label text-white" for="IsActive">
+                            Set this academic year as Active
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i data-lucide="x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-light">
+                        <i data-lucide="save"></i>
+                        Save
+                    </button>
+                </div>
+
+
+
+            }
+        </div>
+    </div>
+</div>

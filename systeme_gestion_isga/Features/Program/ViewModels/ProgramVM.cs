@@ -18,7 +18,7 @@ namespace systeme_gestion_isga.Features.Program.ViewModels
         public string Description { get; set; }
         [Required]
         public int DurationInYears { get; set; }
-        public List<LevelVM> Levels { get; set; } = new List<LevelVM>();
+        //public List<LevelVM> Levels { get; set; } = new List<LevelVM>();
 
     }
 }

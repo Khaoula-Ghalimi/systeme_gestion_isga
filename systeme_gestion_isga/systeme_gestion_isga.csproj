@@ -144,6 +144,13 @@
     <Compile Include="Domain\Enums\Gender.cs" />
     <Compile Include="Domain\Enums\InscriptionStatus.cs" />
     <Compile Include="Domain\Enums\UserRole.cs" />
+    <Compile Include="Features\AcademicYear\Controllers\AcademicYearController.cs" />
+    <None Include="Features\AcademicYear\Views\Create.cshtml" />
+    <Compile Include="Features\AcademicYear\ViewModels\AcademicYearVM.cs" />
+    <Content Include="Features\AcademicYear\Views\Edit.cshtml" />
+    <Content Include="Features\AcademicYear\Views\Details.cshtml" />
+    <None Include="Features\AcademicYear\Views\Index.cshtml" />
+    <Compile Include="Features\AcademicYear\ViewModels\ProgramAcademicYearVM.cs" />
     <Compile Include="Features\Auth\Controllers\AuthController.cs" />
     <Compile Include="Features\Auth\ViewModels\LoginViewModel.cs" />
     <Compile Include="Features\Auth\ViewModels\UserVM.cs" />
@@ -165,6 +172,8 @@
     </Compile>
     <Compile Include="Infrastructure\Database\AppDbContext.cs" />
     <Compile Include="Infrastructure\Database\Seeders\UserSeeder.cs" />
+    <Compile Include="Infrastructure\Repositories\AcademicYears\AcademicYearRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\AcademicYears\IAcademicYearRepository.cs" />
     <Compile Include="Infrastructure\Repositories\GenericRepository.cs" />
     <Compile Include="Infrastructure\Repositories\IGenericRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Levels\ILevelRepository.cs" />
@@ -180,6 +189,8 @@
     <Compile Include="Infrastructure\Repositories\Users\IUserRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Users\UserRepository.cs" />
     <Compile Include="Infrastructure\Security\RoleCookieModule.cs" />
+    <Compile Include="Infrastructure\UnitOfWork\IUnitOfWork.cs" />
+    <Compile Include="Infrastructure\UnitOfWork\UnitOfWork.cs" />
     <Compile Include="Infrastructure\Utils\PasswordHasher.cs" />
     <Compile Include="Migrations\202601071933147_InitialCreate.cs" />
     <Compile Include="Migrations\202601071933147_InitialCreate.Designer.cs">
@@ -263,6 +274,8 @@
     <Content Include="Features\Program\Views\Create.cshtml" />
     <Content Include="Features\Program\Views\Index.cshtml" />
     <Content Include="Features\Program\Views\Edit.cshtml" />
+    <Content Include="Features\AcademicYear\Views\_ViewStart.cshtml" />
+    <Content Include="Features\AcademicYear\Views\web.config" />
     <None Include="packages.config" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
@@ -282,6 +295,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\AcademicYear\" />
     <Folder Include="Views\Program\" />
     <Folder Include="Views\User\" />
   </ItemGroup>

@@ -35,15 +35,25 @@
                     @Html.ValidationMessageFor(m => m.DurationInYears, "", new { @class = "text-danger small" })
                 </div>
 
-
-                <div id="levelFields" class="col-md-12 d-none">
-                    <hr class="border my-4" />
-                    <h5 class="text-white fw-bold mb-3">
-                        <i data-lucide="layers"></i>
-                        Levels
-                    </h5>
-                    <div id="levels"></div>
+                <div class="col-12">
+                    <label class="form-label text-white">Description</label>
+                    @Html.TextAreaFor(m => m.Description, new
+                    {
+                        @class = "form-control",
+                        placeholder = "Describe the program...",
+                        rows = "4"
+                    })
+                    @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger small" })
                 </div>
+
+                @*<div id="levelFields" class="col-md-12 d-none">
+                <hr class="border my-4" />
+                <h5 class="text-white fw-bold mb-3">
+                    <i data-lucide="layers"></i>
+                    Levels
+                </h5>
+                <div id="levels"></div>
+            </div>*@
 
                 <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
                     <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
@@ -52,7 +62,7 @@
                     </a>
                     <button type="submit" class="btn btn-light">
                         <i data-lucide="save"></i>
-                        Save
+                        Save Changes
                     </button>
                 </div>
             }
@@ -62,7 +72,7 @@
 
 </div>
 
-@section scripts
+@*@section scripts
 {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -127,4 +137,4 @@
             });
         });
     </script>
-}
+}*@
