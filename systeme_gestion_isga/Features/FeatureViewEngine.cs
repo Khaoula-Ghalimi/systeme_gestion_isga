@@ -16,6 +16,8 @@ namespace systeme_gestion_isga.Features
             "~/Features/{1}/Views/{0}.cshtml",
             "~/Features/{1}/Views/Shared/{0}.cshtml",
 
+            "~/Features/Shared/Views/{0}.cshtml",
+
             // Fallback to classic MVC
             "~/Views/{1}/{0}.cshtml",
             "~/Views/Shared/{0}.cshtml"

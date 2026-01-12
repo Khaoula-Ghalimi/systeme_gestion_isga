@@ -1,0 +1,38 @@
+﻿@model systeme_gestion_isga.Features.Shared.ViewModels.AccordionMenuVM
+
+@{
+    bool hasItems = Model.Items != null && Model.Items.Any();
+}
+
+
+<div class="accordion-item border-0">
+    <h2 class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#@Model.Id">
+        <button class="accordion-button collapsed text-white p-2">
+            <div class="d-flex align-items-center w-100">
+                <i data-lucide="@Model.TriggerIcon" class="me-2"></i>
+                <p class="m-0">@Model.TriggerText</p>
+                <div class="flex-grow-1"></div>
+                @if (hasItems)
+                {
+                    <i data-lucide="chevron-down"></i>
+                }
+            </div>
+        </button>
+
+    </h2>
+
+    @if (hasItems) 
+    {
+        <div class="accordion-collapse collapse" id="@Model.Id" data-bs-parent="#@Model.ParentAccordionId">
+            <div class="accordion-body">
+                @foreach (var item in Model.Items)
+                {
+                    <a class="list-group-item list-group-item-action text-white px-4 py-1" href="@Url.Action(item.Action,item.Controller, item.RouteValues)">
+                        <i data-lucide="@item.Icon" class="me-2"></i> @item.Text
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+</div>

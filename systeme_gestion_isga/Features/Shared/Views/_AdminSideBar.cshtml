@@ -1,0 +1,38 @@
+﻿@using systeme_gestion_isga.Features.Shared.ViewModels
+
+
+
+
+<div class="pt-3 d-flex flex-column gap-1">
+    @Html.Partial("_AccordionMenu", new AccordionMenuVM
+    {
+        Id = "dashboardMenu",
+        TriggerText = "Dashboard",
+        TriggerIcon = "layout-dashboard"
+    })
+
+
+    @Html.Partial("_AccordionMenu", new AccordionMenuVM
+    {
+        Id = "usersMenu",
+        TriggerText = "Users",
+        TriggerIcon = "users",
+        Items = new List<MenuItemVM> {
+            new MenuItemVM { Text="List Users", Icon="list", Controller="User", Action="Index" },
+            new MenuItemVM { Text="Add User",   Icon="circle-plus", Controller="User", Action="Create" },
+        }
+    })
+
+    @Html.Partial("_AccordionMenu", new AccordionMenuVM
+    {
+        Id = "programsMenu",
+        TriggerText = "Programs",
+        TriggerIcon = "graduation-cap",
+        Items = new List<MenuItemVM> {
+            new MenuItemVM { Text="List Program", Icon="list", Controller="Program", Action="Index" },
+            new MenuItemVM { Text="Add Program",   Icon="circle-plus", Controller="Program", Action="Create" },
+        }
+    })
+</div>
+
+

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using system_gestion_isga.Infrastructure.Repositories.Users;
 using system_gestion_isga.Infrastructure.Utils;
 using systeme_gestion_isga.Features.Auth.ViewModels;
@@ -43,18 +44,39 @@ namespace system_gestion_isga.Features.Auth.Controllers
                 ViewBag.Error = "Invalid username or password.";
                 return View(model);
             }
-            Session["UserId"] = user.Id;
-            Session["Username"] = user.Username;
-            Session["Role"] = user.Role.ToString();
-            //return RedirectToAction("Index", "Home");
-            return Content("Login successful. Welcome " + user.Username + " (" + user.Role + ")");
+            //Session["UserId"] = user.Id;
+            //Session["Username"] = user.Username;
+            //Session["Role"] = user.Role.ToString();
+
+            var ticket = new FormsAuthenticationTicket(
+                1,
+                user.Username,
+                DateTime.Now,
+                DateTime.Now.AddMinutes(model.RememberMe ? 30 : 1),
+                model.RememberMe,
+                user.Role.ToString()
+            );
+
+            var encryptedTicket = FormsAuthentication.Encrypt(ticket);
+            var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket)
+            {
+                HttpOnly = true,
+                Expires = ticket.Expiration,
+                Secure = Request.IsSecureConnection
+
+            };
+            Response.Cookies.Add(cookie);
+            return RedirectToAction("Index", "Dashboard");
+            
 
         }
 
-        // GET: logout
+        // Post: logout
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
-            Session.Clear();
+            FormsAuthentication.SignOut();
             return RedirectToAction("Login", "Auth");
         }
     }

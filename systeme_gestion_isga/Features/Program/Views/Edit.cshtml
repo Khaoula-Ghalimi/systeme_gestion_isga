@@ -1,0 +1,130 @@
+﻿@model systeme_gestion_isga.Features.Program.ViewModels.ProgramVM
+
+
+
+@{
+    ViewBag.Title = "Create a Program";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex align-content-center justify-content-between mb-5">
+        <h4 class="fw-bold text-white mb-0">Edit Program : #@Model.Id</h4>
+        <a href='@Url.Action("Index")' class="btn btn-outline-light">
+            <i data-lucide="arrow-left"></i>
+            Back
+        </a>
+    </div>
+    <div class="card border bg-body-tertiary">
+        <div class="card-body p-4">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="col-md-6">
+                    <label class="form-label text-white">Name</label>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "name..." })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger small" })
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-white">Code</label>
+                    @Html.TextBoxFor(m => m.Code, new { @class = "form-control", placeholder = "SI..." })
+                    @Html.ValidationMessageFor(m => m.Code, "", new { @class = "text-danger small" })
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-white">Duration In Years</label>
+                    @Html.TextBoxFor(m => m.DurationInYears, new { @class = "form-control", @type = "number", @min = "0", placeholder = "0" })
+                    @Html.ValidationMessageFor(m => m.DurationInYears, "", new { @class = "text-danger small" })
+                </div>
+
+
+                <div id="levelFields" class="col-md-12 d-none">
+                    <hr class="border my-4" />
+                    <h5 class="text-white fw-bold mb-3">
+                        <i data-lucide="layers"></i>
+                        Levels
+                    </h5>
+                    <div id="levels"></div>
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i data-lucide="x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-light">
+                        <i data-lucide="save"></i>
+                        Save
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+
+
+</div>
+
+@section scripts
+{
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const durationInput = document.getElementById("DurationInYears");
+            const levelsDiv = document.getElementById("levels");
+            const levelFields = document.getElementById("levelFields");
+
+            // existing levels coming from server
+            const existingLevels = @Html.Raw(Json.Encode(Model.Levels ?? new List<systeme_gestion_isga.Features.Program.ViewModels.LevelVM>()));
+
+            function renderLevels(years) {
+                levelsDiv.innerHTML = "";
+
+                if (years > 0) levelFields.classList.remove("d-none");
+                else { levelFields.classList.add("d-none"); return; }
+
+                for (let i = 0; i < years; i++) {
+
+                    const lvl = existingLevels[i] || {}; // if not exists, empty object
+
+                    levelsDiv.innerHTML += `
+                        <div class="g-3 py-3">
+                            <h5 class="col-md-12 mb-3">Level N°${i + 1}</h5>
+                            <div class="row px-3">
+                                <div class="col-md-4">
+                                    <label class="form-label text-white">Level Name</label>
+                                    <input class="form-control"
+                                           name="Levels[${i}].Name"
+                                           value="${lvl.Name ? String(lvl.Name).replace(/"/g, '&quot;') : ''}"
+                                           placeholder="Year ${i + 1}" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white">Code</label>
+                                    <input class="form-control"
+                                           name="Levels[${i}].Code"
+                                           value="${lvl.Code ? String(lvl.Code).replace(/"/g, '&quot;') : ''}"
+                                           placeholder="L${i + 1}" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-white">Order</label>
+                                    <input class="form-control"
+                                           readonly
+                                           type="number"
+                                           name="Levels[${i}].Order"
+                                           value="${i + 1}" />
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    if (i !== years - 1) levelsDiv.innerHTML += "<hr class='border my-4' />";
+                }
+            }
+
+            // ✅ Render immediately (this fixes "not shown at start")
+            renderLevels(parseInt(durationInput.value) || 0);
+
+            // ✅ Re-render when duration changes
+            durationInput.addEventListener("input", function () {
+                renderLevels(parseInt(this.value) || 0);
+            });
+        });
+    </script>
+}

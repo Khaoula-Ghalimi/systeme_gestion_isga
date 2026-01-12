@@ -1,0 +1,10 @@
+﻿
+
+
+@using (Html.BeginForm("Logout", "Auth", System.Web.Mvc.FormMethod.Post, new { @class = "d-inline" }))
+{
+    @Html.AntiForgeryToken()
+    <button class="btn btn-danger">
+        <i class="bi bi-box-arrow-right"></i> Logout
+    </button>
+}

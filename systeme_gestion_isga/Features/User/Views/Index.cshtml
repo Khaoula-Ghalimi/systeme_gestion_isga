@@ -1,0 +1,188 @@
+﻿@model IEnumerable<systeme_gestion_isga.Domain.Entities.User>
+
+@{
+    ViewBag.Title = "Users";
+}
+
+<div class="container-fluid p-4">
+
+    <!-- Page header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold text-white">User Management</h4>
+
+        <a href="@Url.Action("Create")" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add User
+        </a>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card bg-dark border-0 shadow-sm">
+        <div class="card-body p-0">
+
+            <table class="table table-dark table-hover table-striped mb-0 align-middle">
+                <thead class="table-secondary text-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Role</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-4">
+                                No users found.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var u in Model)
+                        {
+                            <tr>
+                                <td>@u.Id</td>
+
+                                <td>
+                                    <span class="fw-semibold">@u.Username</span>
+                                </td>
+
+                                <td>
+                                    @u.FirstName @u.LastName
+                                </td>
+
+                                <td>
+                                    @switch (u.Role)
+                                    {
+                                        case systeme_gestion_isga.Domain.Enums.UserRole.Admin:
+                                            <span class="badge bg-danger">Admin</span>
+                                            break;
+                                        case systeme_gestion_isga.Domain.Enums.UserRole.Teacher:
+                                            <span class="badge bg-warning text-dark">Teacher</span>
+                                            break;
+                                        case systeme_gestion_isga.Domain.Enums.UserRole.Student:
+                                            <span class="badge bg-info text-dark">Student</span>
+                                            break;
+                                    }
+                                </td>
+
+                                <td>@u.Email</td>
+                                <td>@u.Phone</td>
+
+                                <td class="text-center">
+                                    <a href="@Url.Action("Edit", new { id = u.Id })"
+                                       class="btn btn-sm me-1 text-primary">
+                                        <i data-lucide="pencil"></i>
+                                    </a>
+
+                                    <button type="button"
+                                            class="btn btn-sm text-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteUserModal"
+                                            data-user-id="@u.Id"
+                                            data-user-username="@u.Username"
+                                            data-user-fullname="@($"{u.FirstName} {u.LastName}")"
+                                            data-user-role="@u.Role">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-0 shadow">
+
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title d-flex align-items-center gap-2">
+                    <i data-lucide="alert-triangle"></i>
+                    Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <p class="mb-2">Are you sure you want to delete this user?</p>
+
+                <div class="bg-body-tertiary text-light rounded p-3">
+                    <div><span class="text-secondary">Username:</span> <span id="duUsername" class="fw-semibold"></span></div>
+                    <div><span class="text-secondary">Name:</span> <span id="duFullname"></span></div>
+                    <div><span class="text-secondary">Role:</span> <span id="duRole" class="badge bg-secondary"></span></div>
+                </div>
+
+                <div class="text-warning small mt-3">
+                    This action cannot be undone.
+                </div>
+            </div>
+
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                @using (Html.BeginForm("DeleteConfirmed", "User", FormMethod.Post, new { id = "deleteForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="duId" />
+                    <button type="submit" class="btn btn-danger">
+                        <i data-lucide="trash-2"></i>
+                        Delete
+                    </button>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("deleteUserModal");
+
+            modal.addEventListener("show.bs.modal", function (event) {
+                const btn = event.relatedTarget;
+
+                const id = btn.getAttribute("data-user-id");
+                const username = btn.getAttribute("data-user-username");
+                const fullname = btn.getAttribute("data-user-fullname");
+                const role = btn.getAttribute("data-user-role");
+
+                document.getElementById("duId").value = id;
+                document.getElementById("duUsername").textContent = username;
+                document.getElementById("duFullname").textContent = fullname;
+
+                // role badge styling (optional)
+                const roleEl = document.getElementById("duRole");
+                roleEl.textContent = role;
+                roleEl.className = "badge " + (
+                    role === "Admin" ? "bg-danger" :
+                    role === "Teacher" ? "bg-warning text-dark" :
+                    "bg-info text-dark"
+                );
+
+                if (window.lucide) lucide.createIcons();
+            });
+
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+}
+

@@ -1,0 +1,214 @@
+﻿@model systeme_gestion_isga.Features.Users.ViewModels.UserCreateVM
+@using systeme_gestion_isga.Domain.Enums
+
+@{
+    ViewBag.Title = "Create User";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex align-content-center justify-content-between mb-5">
+        <h4 class="fw-bold text-white mb-0">Create User</h4>
+        <a href='@Url.Action("Index")' class="btn btn-outline-light">
+            <i data-lucide="arrow-left"></i>
+            Back
+        </a>
+    </div>
+    <div class="card border bg-body-tertiary">
+        <div class="card-body p-4">
+            @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">Username</label>
+                    @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "username..." })
+                    @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger small" })
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-white">Password</label>
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "********" })
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">Role</label>
+                    @Html.DropDownListFor(
+                        m => m.Role,
+                        new SelectList(Enum.GetValues(typeof(UserRole))),
+                        new { @class = "form-select", @id = "roleSelect" }
+                    )
+                    @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">Email</label>
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "john.doe@example.com" })
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">First Name</label>
+                    @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control", placeholder = "John" })
+                    @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">Last Name</label>
+                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control", placeholder = "Doe" })
+                    @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">Phone</label>
+                    @Html.TextBoxFor(m => m.Phone, new { @class = "form-control", placeholder = "+212..." })
+                    @Html.ValidationMessageFor(m => m.Phone, "", new { @class = "text-danger small" })
+                </div>
+                @*////////////////////////////////////////////////////////////////*@
+                <div id="studentFields" class="col-md-12 d-none">
+                    <hr class="border my-4" />
+                    <h5 class="text-white fw-bold mb-3">
+                        <i data-lucide="graduation-cap"></i>
+                        Student Information
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Student Number</label>
+                            @Html.TextBoxFor(m => m.Student.StudentNumber, new { @class = "form-control", placeholder = "ST212" })
+                            @Html.ValidationMessageFor(m => m.Student.StudentNumber, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">CIN</label>
+                            @Html.TextBoxFor(m => m.Student.CIN, new { @class = "form-control", placeholder = "X00000" })
+                            @Html.ValidationMessageFor(m => m.Student.CIN, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Birth Date</label>
+                            @Html.TextBoxFor(
+                                m => m.Student.BirthDate,
+                                "{0:yyyy-MM-dd}",
+                                new { @class = "form-control", type = "date" }
+                            )
+                            @Html.ValidationMessageFor(m => m.Student.BirthDate, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Gender</label>
+                            @Html.DropDownListFor(
+                                m => m.Student.Gender,
+                                new SelectList(Enum.GetValues(typeof(Gender))),
+                                new { @class = "form-select" }
+                            )
+                            @Html.ValidationMessageFor(m => m.Student.Gender, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Address</label>
+                            @Html.TextBoxFor(m => m.Student.Address, new { @class = "form-control", placeholder = "Street, City..." })
+                            @Html.ValidationMessageFor(m => m.Student.Address, "", new { @class = "text-danger small" })
+                        </div>
+
+
+                    </div>
+
+                </div>
+                @*////////////////////////////////////////////////////////////////*@
+                <div id="teacherFields" class="col-md-12 d-none">
+                    <hr class="border my-4" />
+                    <h5 class="text-white fw-bold mb-3">
+                        <i data-lucide="graduation-cap"></i>
+                        Teacher Information
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Employee Number</label>
+                            @Html.TextBoxFor(m => m.Teacher.EmployeeNumber, new { @class = "form-control", placeholder = "EM212" })
+                            @Html.ValidationMessageFor(m => m.Teacher.EmployeeNumber, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">CIN</label>
+                            @Html.TextBoxFor(m => m.Teacher.CIN, new { @class = "form-control", placeholder = "X00000" })
+                            @Html.ValidationMessageFor(m => m.Teacher.CIN, "", new { @class = "text-danger small" })
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Birth Date</label>
+                            @Html.TextBoxFor(
+                                m => m.Teacher.BirthDate,
+                                "{0:yyyy-MM-dd}",
+                                new { @class = "form-control", type = "date" }
+                            )
+                            @Html.ValidationMessageFor(m => m.Teacher.BirthDate, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Gender</label>
+                            @Html.DropDownListFor(
+                                m => m.Teacher.Gender,
+                                new SelectList(Enum.GetValues(typeof(Gender))),
+                                new { @class = "form-select" }
+                            )
+                            @Html.ValidationMessageFor(m => m.Teacher.Gender, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-white">Address</label>
+                            @Html.TextBoxFor(m => m.Teacher.Address, new { @class = "form-control", placeholder = "Street, City..." })
+                            @Html.ValidationMessageFor(m => m.Teacher.Address, "", new { @class = "text-danger small" })
+                        </div>
+
+
+                    </div>
+
+                </div>
+                @*////////////////////////////////////////////////////////////////*@
+                <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i data-lucide="x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-light">
+                        <i data-lucide="save"></i>
+                        Save
+                    </button>
+                </div>
+
+            }
+
+        </div>
+    </div>
+
+
+</div>
+
+@section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const roleSelect = document.getElementById("roleSelect");
+            const studentFields = document.getElementById("studentFields");
+            const teacherFields = document.getElementById("teacherFields");
+
+            function toggleRoleFields() {
+                const role = roleSelect.value;
+
+                // hide by default
+                studentFields.classList.add("d-none");
+                teacherFields.classList.add("d-none");
+
+                // show student section only
+                if (role === "Student") {
+                    studentFields.classList.remove("d-none");
+                    teacherFields.classList.add("d-none");
+                } else if (role === "Teacher") {
+                    studentFields.classList.add("d-none");
+                    teacherFields.classList.remove("d-none");
+                }
+
+                // re-render lucide icons (for the graduation cap etc.)
+                if (window.lucide) lucide.createIcons();
+            }
+
+            roleSelect.addEventListener("change", toggleRoleFields);
+
+            // run once (important when returning with validation errors)
+            toggleRoleFields();
+        });
+    </script>
+}
+

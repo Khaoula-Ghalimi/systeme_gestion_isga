@@ -1,0 +1,64 @@
+﻿@using systeme_gestion_isga.Features.Shared.ViewModels
+
+<!DOCTYPE html>
+<html data-bs-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>@ViewBag.Title</title>
+
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/CSS/site.css" rel="stylesheet" />
+
+    @RenderSection("head", required: false)
+</head>
+<body class="bg-body d-flex flex-column overflow-hidden">
+    <header class="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="#">
+            <img src="~/Content/Images/logo.png" alt="Logo" height="50">
+        </a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            @Html.Partial("_LogoutButton")
+        }
+
+    </header>
+    <div class="container-fluid flex-grow-1" style="min-height:0;">
+        <div class="row h-100">
+            <div class="sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary overflow-auto d-none d-md-block">
+                @if (User.IsInRole("Admin"))
+                {
+                    @Html.Partial("_AdminSideBar")
+                }
+
+                else if (User.IsInRole("Teacher"))
+                {
+                @*@Html.Partial("_SidebarTeacher")*@
+
+                <div>Teacher</div>
+                }
+                else if (User.IsInRole("Student"))
+                {
+                @*@Html.Partial("_SidebarStudent")*@
+                <div>Student</div>
+                }
+            </div>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 overflow-auto h-100">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+
+    <script src="~/Content/lucide/lucide.min.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+
+
+    <script src="~/Scripts/bootstrap.min.js"></script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

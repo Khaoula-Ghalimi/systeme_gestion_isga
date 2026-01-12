@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div class="mb-4 w-100">
+    <div class="mb-3 w-100">
         <div class="form-floating w-100">
             @Html.PasswordFor(m => m.Password, new
        {
@@ -40,6 +40,19 @@
             <label for="floatingPassword">Password</label>
         </div>
     </div>
+
+    <div class="mb-4 w-100">
+        <div class="form-check w-100">
+            @Html.CheckBoxFor(m => m.RememberMe, new
+       {
+           @class = "form-check-input",
+           @id = "rememberMe"
+
+       })
+            <label class="form-check-label" for="rememberMe">Remember me</label>
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-danger w-100">Login</button>
 
     }

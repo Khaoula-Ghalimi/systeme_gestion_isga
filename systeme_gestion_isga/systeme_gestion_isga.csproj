@@ -113,6 +113,7 @@
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\CSS\site.css" />
     <Content Include="Content\Images\logo.png" />
+    <Content Include="Content\lucide\lucide.min.js" />
     <Content Include="Global.asax" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
@@ -124,15 +125,41 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Domain\Entities\AcademicYear.cs" />
+    <Compile Include="Domain\Entities\Grade.cs" />
+    <Compile Include="Domain\Entities\Inscription.cs" />
+    <Compile Include="Domain\Entities\Level.cs" />
     <Compile Include="Domain\Entities\ModelBase.cs" />
+    <Compile Include="Domain\Entities\Module.cs" />
+    <Compile Include="Domain\Entities\ModuleSubject.cs" />
+    <Compile Include="Domain\Entities\Program.cs" />
+    <Compile Include="Domain\Entities\ProgramAcademicYear.cs" />
+    <Compile Include="Domain\Entities\Semester.cs" />
+    <Compile Include="Domain\Entities\SemesterModule.cs" />
     <Compile Include="Domain\Entities\Student.cs" />
+    <Compile Include="Domain\Entities\Subject.cs" />
     <Compile Include="Domain\Entities\Teacher.cs" />
+    <Compile Include="Domain\Entities\TeachingUnit.cs" />
     <Compile Include="Domain\Entities\User.cs" />
+    <Compile Include="Domain\Enums\Gender.cs" />
+    <Compile Include="Domain\Enums\InscriptionStatus.cs" />
     <Compile Include="Domain\Enums\UserRole.cs" />
     <Compile Include="Features\Auth\Controllers\AuthController.cs" />
     <Compile Include="Features\Auth\ViewModels\LoginViewModel.cs" />
     <Compile Include="Features\Auth\ViewModels\UserVM.cs" />
+    <Compile Include="Features\Dashboard\Controllers\DashboardController.cs" />
     <Compile Include="Features\FeatureViewEngine.cs" />
+    <Compile Include="Features\Program\Controllers\ProgramController.cs" />
+    <Compile Include="Features\Program\ViewModels\LevelVM.cs" />
+    <Compile Include="Features\Program\ViewModels\ProgramVM.cs" />
+    <Compile Include="Features\Program\ViewModels\SemesterVM.cs" />
+    <Compile Include="Features\Shared\ViewModels\AccordionMenuVM.cs" />
+    <Compile Include="Features\Shared\ViewModels\MenuItemVM.cs" />
+    <Compile Include="Features\User\Controllers\UserController.cs" />
+    <Compile Include="Features\User\ViewModels\StudentVM.cs" />
+    <Compile Include="Features\User\ViewModels\TeacherVM.cs" />
+    <Compile Include="Features\User\ViewModels\UserCreateVM.cs" />
+    <Compile Include="Features\User\ViewModels\UserEditVM.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -140,12 +167,51 @@
     <Compile Include="Infrastructure\Database\Seeders\UserSeeder.cs" />
     <Compile Include="Infrastructure\Repositories\GenericRepository.cs" />
     <Compile Include="Infrastructure\Repositories\IGenericRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Levels\ILevelRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Levels\LevelRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Programs\IProgramRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Programs\ProgramRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Semesters\ISemesterRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Semesters\SemesterRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Students\IStudentRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Students\StudentRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Teachers\ITeacherRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Teachers\TeacherRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Users\IUserRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Users\UserRepository.cs" />
+    <Compile Include="Infrastructure\Security\RoleCookieModule.cs" />
     <Compile Include="Infrastructure\Utils\PasswordHasher.cs" />
     <Compile Include="Migrations\202601071933147_InitialCreate.cs" />
     <Compile Include="Migrations\202601071933147_InitialCreate.Designer.cs">
       <DependentUpon>202601071933147_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601102258367_CreateProgramLevelSemester.cs" />
+    <Compile Include="Migrations\202601102258367_CreateProgramLevelSemester.Designer.cs">
+      <DependentUpon>202601102258367_CreateProgramLevelSemester.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601102308129_CreateModuleAndLinkToSemester.cs" />
+    <Compile Include="Migrations\202601102308129_CreateModuleAndLinkToSemester.Designer.cs">
+      <DependentUpon>202601102308129_CreateModuleAndLinkToSemester.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601102318556_CreateSubjectAndLinkToModule.cs" />
+    <Compile Include="Migrations\202601102318556_CreateSubjectAndLinkToModule.Designer.cs">
+      <DependentUpon>202601102318556_CreateSubjectAndLinkToModule.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601102336253_AddInscription.cs" />
+    <Compile Include="Migrations\202601102336253_AddInscription.Designer.cs">
+      <DependentUpon>202601102336253_AddInscription.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601110011243_AddTeachingUnitAndGrade.cs" />
+    <Compile Include="Migrations\202601110011243_AddTeachingUnitAndGrade.Designer.cs">
+      <DependentUpon>202601110011243_AddTeachingUnitAndGrade.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601121307435_AddCascadeDelete.cs" />
+    <Compile Include="Migrations\202601121307435_AddCascadeDelete.Designer.cs">
+      <DependentUpon>202601121307435_AddCascadeDelete.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601121346285_AddProgramAcademicYearAndRewireLevels.cs" />
+    <Compile Include="Migrations\202601121346285_AddProgramAcademicYearAndRewireLevels.Designer.cs">
+      <DependentUpon>202601121346285_AddProgramAcademicYearAndRewireLevels.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -179,6 +245,24 @@
     <Content Include="Features\Teachers\ViewModels\.gitkeep" />
     <Content Include="Features\Students\ViewModels\.gitkeep" />
     <Content Include="Features\Students\Controllers\.gitkeep" />
+    <Content Include="Features\Dashboard\Views\_ViewStart.cshtml" />
+    <Content Include="Features\Dashboard\Views\web.config" />
+    <Content Include="Features\Dashboard\ViewModels\.gitkeep" />
+    <Content Include="Features\Dashboard\Views\Index.cshtml" />
+    <Content Include="Features\Shared\Views\_LogoutButton.cshtml" />
+    <Content Include="Features\Shared\Views\web.config" />
+    <Content Include="Features\Shared\Views\_AccordionMenu.cshtml" />
+    <Content Include="Features\Shared\Views\_AdminSideBar.cshtml" />
+    <Content Include="Features\User\Views\_ViewStart.cshtml" />
+    <Content Include="Features\User\Views\web.config" />
+    <Content Include="Features\User\Views\Index.cshtml" />
+    <Content Include="Features\User\Views\Create.cshtml" />
+    <Content Include="Features\User\Views\Edit.cshtml" />
+    <Content Include="Features\Program\Views\_ViewStart.cshtml" />
+    <Content Include="Features\Program\Views\web.config" />
+    <Content Include="Features\Program\Views\Create.cshtml" />
+    <Content Include="Features\Program\Views\Index.cshtml" />
+    <Content Include="Features\Program\Views\Edit.cshtml" />
     <None Include="packages.config" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
@@ -188,6 +272,7 @@
     <Content Include="Scripts\bootstrap.bundle.js.map" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\_DashboardLayoutPage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -197,12 +282,33 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Infrastructure\Repositories\Students\" />
-    <Folder Include="Infrastructure\Repositories\Teachers\" />
+    <Folder Include="Views\Program\" />
+    <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202601071933147_InitialCreate.resx">
       <DependentUpon>202601071933147_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601102258367_CreateProgramLevelSemester.resx">
+      <DependentUpon>202601102258367_CreateProgramLevelSemester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601102308129_CreateModuleAndLinkToSemester.resx">
+      <DependentUpon>202601102308129_CreateModuleAndLinkToSemester.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601102318556_CreateSubjectAndLinkToModule.resx">
+      <DependentUpon>202601102318556_CreateSubjectAndLinkToModule.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601102336253_AddInscription.resx">
+      <DependentUpon>202601102336253_AddInscription.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601110011243_AddTeachingUnitAndGrade.resx">
+      <DependentUpon>202601110011243_AddTeachingUnitAndGrade.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601121307435_AddCascadeDelete.resx">
+      <DependentUpon>202601121307435_AddCascadeDelete.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601121346285_AddProgramAcademicYearAndRewireLevels.resx">
+      <DependentUpon>202601121346285_AddProgramAcademicYearAndRewireLevels.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
