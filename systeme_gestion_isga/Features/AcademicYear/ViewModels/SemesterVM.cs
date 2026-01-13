@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
-namespace systeme_gestion_isga.Features.Program.ViewModels
+namespace systeme_gestion_isga.Features.AcademicYear.ViewModels
 {
     public class SemesterVM
     {

@@ -47,12 +47,15 @@ namespace system_gestion_isga.Features.Auth.Controllers
             //Session["UserId"] = user.Id;
             //Session["Username"] = user.Username;
             //Session["Role"] = user.Role.ToString();
+            var expiration = model.RememberMe
+                ? DateTime.Now.AddDays(14)   // 2 weeks
+                : DateTime.Now.AddMinutes(30);
 
             var ticket = new FormsAuthenticationTicket(
                 1,
                 user.Username,
                 DateTime.Now,
-                DateTime.Now.AddMinutes(model.RememberMe ? 30 : 1),
+                expiration,
                 model.RememberMe,
                 user.Role.ToString()
             );
@@ -61,10 +64,14 @@ namespace system_gestion_isga.Features.Auth.Controllers
             var cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket)
             {
                 HttpOnly = true,
-                Expires = ticket.Expiration,
                 Secure = Request.IsSecureConnection
 
             };
+            if (model.RememberMe)
+            {
+                cookie.Expires = ticket.Expiration;
+            }
+
             Response.Cookies.Add(cookie);
             return RedirectToAction("Index", "Dashboard");
             

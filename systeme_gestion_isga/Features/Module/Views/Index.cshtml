@@ -1,0 +1,138 @@
+﻿@model IEnumerable<systeme_gestion_isga.Features.Module.ViewModels.ModuleVM>
+
+@{
+    ViewBag.Title = "Modules";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold text-white">Modules</h4>
+
+        <a href="@Url.Action("Create")" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Add Module
+        </a>
+    </div>
+
+    <div class="card bg-dark border-0 shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-dark table-hover table-striped mb-0 align-middle">
+                <thead class="table-secondary text-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Code</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No modules found.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var m in Model)
+                        {
+                            <tr>
+                                <td>@m.Id</td>
+                                <td>@m.Name</td>
+                                <td>@m.Code</td>
+                                <td class="text-center">
+                                    <a href="@Url.Action("Edit", new { id = m.Id })"
+                                       class="btn btn-sm me-1 text-primary">
+                                        <i data-lucide="pencil"></i>
+                                    </a>
+
+                                    <button type="button"
+                                            class="btn btn-sm text-danger"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModuleModal"
+                                            data-module-id="@m.Id"
+                                            data-module-name="@m.Name">
+                                        <i data-lucide="trash-2"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModuleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-dark text-white border-0 shadow">
+
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title d-flex align-items-center gap-2">
+                    <i data-lucide="alert-triangle"></i>
+                    Confirm Delete
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <p class="mb-2">Are you sure you want to delete this module?</p>
+
+                <div class="bg-body-tertiary text-light rounded p-3">
+                    <div>
+                        <span class="text-secondary">Module:</span>
+                        <span id="dmName" class="fw-semibold"></span>
+                    </div>
+                </div>
+
+                <div class="text-warning small mt-3">
+                    This action cannot be undone.
+                </div>
+            </div>
+
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">
+                    Cancel
+                </button>
+
+                @using (Html.BeginForm("DeleteConfirmed", "Module", FormMethod.Post, new { id = "deleteForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="dmId" />
+                    <button type="submit" class="btn btn-danger">
+                        <i data-lucide="trash-2"></i>
+                        Delete
+                    </button>
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("deleteModuleModal");
+
+            modal.addEventListener("show.bs.modal", function (event) {
+                const btn = event.relatedTarget;
+
+                const id = btn.getAttribute("data-module-id");
+                const name = btn.getAttribute("data-module-name");
+
+                document.getElementById("dmId").value = id;
+                document.getElementById("dmName").textContent = name;
+
+                if (window.lucide) lucide.createIcons();
+            });
+
+            if (window.lucide) lucide.createIcons();
+        });
+    </script>
+}

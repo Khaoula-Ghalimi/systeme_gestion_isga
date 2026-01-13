@@ -1,0 +1,167 @@
+﻿@model systeme_gestion_isga.Features.Semester.ViewModels.SemesterEditModulesVM
+@{
+    ViewBag.Title = "Edit Semester Modules";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex align-content-center justify-content-between mb-5">
+        <h4 class="fw-bold text-white mb-0">
+            Edit Semester Modules : #@Model.SemesterId
+            <span class="text-secondary ms-2">• Semester @Model.SemesterOrder : @Model.SemesterName</span>
+        </h4>
+        <a href='@Url.Action("Index","Semester")' class="btn btn-outline-light">
+            <i data-lucide="arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="card border bg-body-tertiary">
+        <div class="card-body p-4">
+            @using (Html.BeginForm("Edit", "Semester", FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.SemesterId)
+
+                <div class="col-12">
+                    <label class="form-label text-white">Modules</label>
+
+                    <div class="d-flex gap-2 align-items-start flex-wrap">
+                        <select id="modulePicker" class="form-select" style="max-width: 520px;">
+                            <option value="">-- Select a module to add --</option>
+                            @foreach (var m in Model.AvailableModules)
+                            {
+                                <option value="@m.Id">@m.Name</option>
+                            }
+                        </select>
+
+                        <button type="button" id="btnAddModule" class="btn btn-outline-light">
+                            <i data-lucide="plus"></i>
+                            Add
+                        </button>
+                    </div>
+
+                    <!-- preload existing modules -->
+                    <div id="preloadedModules" style="display:none;">
+                        @for (int i = 0; i < Model.SemesterModules.Count; i++)
+                        {
+                            <div data-id="@Model.SemesterModules[i].ModuleId"
+                                 data-text="@($"{Model.SemesterModules[i].ModuleCode} : {Model.SemesterModules[i].ModuleName}")">
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mt-3" id="selectedModulesContainer"></div>
+
+                    <small class="text-secondary">
+                        Add or remove modules, then click Save Changes.
+                    </small>
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
+                    <a href="@Url.Action("Index","Semester")" class="btn btn-outline-secondary">
+                        <i data-lucide="x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-light">
+                        <i data-lucide="save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const picker = document.getElementById("modulePicker");
+        const addBtn = document.getElementById("btnAddModule");
+        const container = document.getElementById("selectedModulesContainer");
+
+        const allOptions = Array.from(picker.querySelectorAll("option"))
+            .filter(o => o.value !== "")
+            .map(o => ({ value: o.value, text: o.text }));
+
+        // Load preselected modules
+        let selected = Array.from(document.querySelectorAll("#preloadedModules div"))
+            .map(d => ({
+                moduleId: d.dataset.id,
+                text: d.dataset.text
+            }));
+
+        function rebuildPicker() {
+            const selectedIds = new Set(selected.map(x => x.moduleId));
+
+            picker.innerHTML = `<option value="">-- Select a module to add --</option>`;
+
+            allOptions
+                .filter(opt => !selectedIds.has(opt.value))
+                .forEach(opt => {
+                    const option = document.createElement("option");
+                    option.value = opt.value;
+                    option.textContent = opt.text;
+                    picker.appendChild(option);
+                });
+
+            picker.value = "";
+        }
+
+        function renderSelected() {
+            container.innerHTML = "";
+
+            if (selected.length === 0) {
+                container.innerHTML = `<div class="text-secondary small">No modules selected yet.</div>`;
+                return;
+            }
+
+            selected.forEach((item, index) => {
+                const row = document.createElement("div");
+                row.className = "d-flex align-items-center gap-2 mb-2 flex-wrap";
+
+                const badge = document.createElement("span");
+                badge.className = "badge bg-light text-dark";
+                badge.textContent = item.text;
+
+                const removeBtn = document.createElement("button");
+                removeBtn.type = "button";
+                removeBtn.className = "btn btn-sm btn-outline-danger";
+                removeBtn.innerHTML = `<i data-lucide="x"></i>`;
+                removeBtn.onclick = () => {
+                    selected = selected.filter(x => x.moduleId !== item.moduleId);
+                    render();
+                };
+
+                const hidden = document.createElement("input");
+                hidden.type = "hidden";
+                hidden.name = `SemesterModules[${index}].ModuleId`;
+                hidden.value = item.moduleId;
+
+                row.appendChild(badge);
+                row.appendChild(removeBtn);
+                row.appendChild(hidden);
+                container.appendChild(row);
+            });
+
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function render() {
+            rebuildPicker();
+            renderSelected();
+        }
+
+        addBtn.onclick = () => {
+            const moduleId = picker.value;
+            if (!moduleId) return;
+
+            if (selected.some(x => x.moduleId === moduleId)) return;
+
+            const text = picker.options[picker.selectedIndex].text;
+            selected.push({ moduleId, text });
+
+            render();
+        };
+
+        render();
+    })();
+</script>

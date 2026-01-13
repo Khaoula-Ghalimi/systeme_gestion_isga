@@ -46,14 +46,6 @@
                 </div>
 
 
-                @*<div id="levelFields" class="col-md-12 d-none">
-                <hr class="border my-4" />
-                <h5 class="text-white fw-bold mb-3">
-                    <i data-lucide="layers"></i>
-                    Levels
-                </h5>
-                <div id="levels"></div>
-            </div>*@
 
                 <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
                     <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
@@ -71,58 +63,3 @@
 
 
 </div>
-
-
-@*@section scripts
-{
-    <script>
-        document.addEventListener("DOMContentLoaded", function ()
-        {
-            const durationInput = document.getElementById("DurationInYears");
-            const levels = document.getElementById("levels");
-            const levelFields = document.getElementById("levelFields");
-
-            durationInput.addEventListener("input", function ()
-            {
-                const years = parseInt(this.value) || 0;
-                levels.innerHTML = "";
-                if (years > 0) {
-                    levelFields.classList.remove("d-none");
-                } else {
-                    levelFields.classList.add("d-none");
-                }
-                for (let i = 0; i < years; i++) {
-                    levels.innerHTML += `
-                        <div class="g-3 py-3">
-                            <h5 class="col-md-12 mb-3">Level N°${i + 1}</h5>
-                            <div class="row px-3">
-                                <div class="col-md-4">
-                                    <label class="form-label text-white">Level Name</label>
-                                    <input class="form-control"
-                                           name="Levels[${i}].Name"
-                                           placeholder="Year ${i + 1}" />
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label text-white">Code</label>
-                                    <input class="form-control"
-                                           name="Levels[${i}].Code"
-                                           placeholder="L${i + 1}" />
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label text-white">Order</label>
-                                    <input class="form-control"
-                                           readonly
-                                           type="number"
-                                           name="Levels[${i}].Order"
-                                           value="${i + 1}" />
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    if (i !== years - 1) levels.innerHTML += "<hr class='border my-4' />";
-                }
-            });
-        })
-
-    </script>
-}*@

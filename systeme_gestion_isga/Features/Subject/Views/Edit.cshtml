@@ -1,0 +1,48 @@
+﻿@model systeme_gestion_isga.Features.Subject.ViewModels.SubjectVM
+
+@{
+    ViewBag.Title = "Edit Subject";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex align-content-center justify-content-between mb-5">
+        <h4 class="fw-bold text-white mb-0">Edit Subject : #@Model.Id</h4>
+        <a href='@Url.Action("Index")' class="btn btn-outline-light">
+            <i data-lucide="arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="card border bg-body-tertiary">
+        <div class="card-body p-4">
+            @using (Html.BeginForm("Edit", "Subject", FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">Name</label>
+                    @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Subject name..." })
+                    @Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">Code</label>
+                    @Html.TextBoxFor(m => m.Code, new { @class = "form-control", placeholder = "MAT101..." })
+                    @Html.ValidationMessageFor(m => m.Code, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i data-lucide="x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-light">
+                        <i data-lucide="save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,128 @@
+﻿@model systeme_gestion_isga.Features.Semester.ViewModels.AcademicYearsTreeVM
+@{
+    ViewBag.Title = "Academic Years > Programs > Levels > Semesters";
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold text-white mb-0">Academic Structure</h4>
+    </div>
+
+    @if (Model.AcademicYears == null || !Model.AcademicYears.Any())
+    {
+        <div class="text-secondary">No academic years found.</div>
+    }
+    else
+    {
+        <div class="accordion" id="ayAccordion">
+            @for (int i = 0; i < Model.AcademicYears.Count; i++)
+            {
+                var ay = Model.AcademicYears[i];
+                var ayId = $"ay_{ay.AcademicYearId}";
+                <div class="accordion-item bg-body-tertiary border mb-2">
+                    <h2 class="accordion-header" id="heading_@ayId">
+                        <button class="accordion-button collapsed bg-body-tertiary text-white"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#collapse_@ayId">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <div class="fw-bold">
+                                    @ay.AcademicYearName
+                                    <span class="text-secondary ms-2">
+                                        (@ay.StartDate.ToShortDateString() - @ay.EndDate.ToShortDateString())
+                                    </span>
+                                </div>
+                                <span class="badge @(ay.IsActive ? "bg-success" : "bg-danger") ms-3">
+                                    @(ay.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </div>
+                        </button>
+                    </h2>
+
+                    <div id="collapse_@ayId" class="accordion-collapse collapse" data-bs-parent="#ayAccordion">
+                        <div class="accordion-body">
+
+                            @if (!ay.Programs.Any())
+                            {
+                                <div class="text-secondary">No programs in this academic year.</div>
+                            }
+                            else
+                            {
+                                foreach (var p in ay.Programs)
+                                {
+                                    <div class="card border bg-dark mb-3">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div class="text-white fw-semibold">
+                                                    @p.ProgramName <span class="text-secondary">(@p.ProgramCode)</span>
+                                                    @if (p.DurationInYears.HasValue)
+                                                    {
+                                                        <span class="text-secondary ms-2">• @p.DurationInYears years</span>
+                                                    }
+                                                </div>
+                                                <span class="badge @(p.IsActive ? "bg-success" : "bg-danger")">
+                                                    @(p.IsActive ? "Active" : "Inactive")
+                                                </span>
+                                            </div>
+
+                                            <hr class="border-secondary" />
+
+                                            @if (!p.Levels.Any())
+                                            {
+                                                <div class="text-secondary">No levels.</div>
+                                            }
+                                            else
+                                            {
+                                                <div class="row g-3">
+                                                    @foreach (var l in p.Levels)
+                                                    {
+                                                        <div class="col-md-6 col-lg-4">
+                                                            <div class="card border bg-body-tertiary">
+                                                                <div class="card-body">
+                                                                    <div class="text-white fw-bold mb-2">
+                                                                        Level @l.Order: @l.LevelName
+                                                                    </div>
+
+                                                                    <div class="mt-2">
+                                                                        @if (!l.Semesters.Any())
+                                                                        {
+                                                                            <div class="text-secondary">No semesters.</div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            foreach (var s in l.Semesters)
+                                                                            {
+                                                                                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary py-2">
+                                                                                    <div class="text-white">
+                                                                                        Semester @s.Order: @s.Name
+                                                                                    </div>
+
+                                                                                    <!-- Edit button -->
+                                                                                    <a class="btn btn-sm btn-outline-light"
+                                                                                       title="Edit semester modules"
+                                                                                       href="@Url.Action("Edit", "Semester", new { id = s.SemesterId })">
+                                                                                        <i data-lucide="pen"></i>
+                                                                                    </a>
+
+                                                                                </div>
+                                                                            }
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

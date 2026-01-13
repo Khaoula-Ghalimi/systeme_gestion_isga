@@ -34,7 +34,7 @@ namespace systeme_gestion_isga.Domain.Entities
 
         public virtual User User { get; set; }
 
-        public virtual ICollection<ModuleSubject> ModuleSubjects { get; set; } = new List<ModuleSubject>();
+        //public virtual ICollection<ModuleSubject> ModuleSubjects { get; set; } = new List<ModuleSubject>();
 
         public virtual ICollection<Inscription> Inscriptions { get; set; } = new List<Inscription>();
 

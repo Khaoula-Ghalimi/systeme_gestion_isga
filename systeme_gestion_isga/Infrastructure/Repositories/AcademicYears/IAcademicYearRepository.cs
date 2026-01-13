@@ -10,5 +10,6 @@ namespace systeme_gestion_isga.Infrastructure.Repositories.AcademicYears
 {
     public interface IAcademicYearRepository : IGenericRepository<AcademicYear>
     {
+        
     }
 }

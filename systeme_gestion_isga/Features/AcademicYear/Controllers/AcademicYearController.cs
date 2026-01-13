@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -29,7 +30,7 @@ namespace systeme_gestion_isga.Features.AcademicYear.Controllers
         // GET: AcademicYear
         public ActionResult Index()
         {
-            var academicYears= _uow.AcademicYears
+            var academicYears = _uow.AcademicYears
                 .GetAll()
                 .Select(a => new AcademicYearVM
                 {
@@ -47,15 +48,11 @@ namespace systeme_gestion_isga.Features.AcademicYear.Controllers
         // GET: AcademicYear/Details/5
         public ActionResult Details(int id)
         {
+            Debug.WriteLine("Hmmm : " + _uow.Levels.GetByProgramAcademicYearId(5)[0].Code);
             var academicYear = _uow.AcademicYears.GetById(id);
-            var programs_input = _uow.Programs.GetAll().Select(p => new ProgramVM
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Code = p.Code,
-                DurationInYears = p.DurationInYears
+            var programs = _uow.ProgramAcademicYears.GetByAcademicYear(id);
+            var programs_excluded = _uow.ProgramAcademicYears.GetExceptAcademicYear(id);
 
-            }).OrderBy(p => p.Id).ToList();
             
             if (academicYear == null)
                 return HttpNotFound();
@@ -65,7 +62,36 @@ namespace systeme_gestion_isga.Features.AcademicYear.Controllers
                 Name = academicYear.Name,
                 StartDate = academicYear.StartDate,
                 EndDate = academicYear.EndDate,
-                IsActive = academicYear.IsActive
+                IsActive = academicYear.IsActive,
+                Programs = programs.Select(p =>
+                {
+                    // <--- IMPORTANT
+                    Debug.WriteLine("Hmmm : " + p.Id);
+                    return new ProgramAcademicYearVM
+                    {
+                        Id = p.Id,
+                        ProgramId = p.ProgramId,
+                        Name = p.Name,
+                        Code = p.Code,
+                        DurationInYearsOverride = p.DurationInYearsOverride,
+                        IsActive = p.IsActive,
+
+                        Levels = _uow.Levels.GetByProgramAcademicYearId(p.Id)
+                                    .Select(l => new LevelVM
+                                    {
+                                        Name = l.Name,
+                                        Code = l.Code,
+                                        Order = l.Order
+                                    }).ToList()
+                    };
+                }).ToList(),
+                ExcludedPrograms = programs_excluded.Select(p => new Features.AcademicYear.ViewModels.ProgramVM
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Code = p.Code,
+                    DurationInYears = p.DurationInYears
+                }).ToList()
             };
             return View(model);
         }
@@ -101,7 +127,7 @@ namespace systeme_gestion_isga.Features.AcademicYear.Controllers
         public ActionResult Edit(int id)
         {
             var academicYear = _uow.AcademicYears.GetById(id);
-            if(academicYear == null)
+            if (academicYear == null)
                 return HttpNotFound();
 
             var model = new AcademicYearVM
@@ -164,5 +190,155 @@ namespace systeme_gestion_isga.Features.AcademicYear.Controllers
             _uow.AcademicYears.Save();
             return RedirectToAction("Index");
         }
+
+        //POST : AcademicYear/AddProgramToYear
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddProgramToYear(AcademicYearVM model)
+        {
+            
+            if (model?.ProgramAcademicYearVM == null)
+                return RedirectToAction("Details", new { id = model.Id });
+
+            var vm = model.ProgramAcademicYearVM;
+            Debug.WriteLine("hmmm : "+model.ProgramAcademicYearVM.Id);
+
+
+            // years
+            var years = vm.DurationInYearsOverride;
+            if (years <= 0)
+            {
+                var program = _uow.Programs.GetById(vm.ProgramId);
+                years = program?.DurationInYears ?? 0;
+            }
+            if (years <= 0)
+                return RedirectToAction("Details", new { id = model.Id });
+
+            // EDIT MODE?
+            if (vm.IsEdit) // bool in VM, or use hidden "isEditMode"
+            {
+                Debug.WriteLine(model.Id);
+                return EditProgramInYear(model.Id, vm, years);
+            }
+
+            // CREATE MODE (your current logic)
+            var pay = new Domain.Entities.ProgramAcademicYear
+            {
+                AcademicYearId = model.Id,
+                ProgramId = vm.ProgramId,
+                DurationInYearsOverride = vm.DurationInYearsOverride,
+                IsActive = true
+            };
+
+            _uow.ProgramAcademicYears.Insert(pay);
+            _uow.Save(); // ensures pay.Id
+
+            RecreateLevelsAndSemesters(pay.Id, years, vm.Levels);
+
+
+            return RedirectToAction("Details", new { id = model.Id });
+        }
+
+
+
+        private ActionResult EditProgramInYear(int academicYearId, ProgramAcademicYearVM vm, int years)
+        {
+            Debug.WriteLine("called1 : ");
+            // 1) load the join row by its ID
+            var pay = _uow.ProgramAcademicYears.GetById(vm.Id);
+            if (pay == null) return HttpNotFound();
+            Debug.WriteLine("called2");
+            // optional safety check
+            if (pay.AcademicYearId != academicYearId) return HttpNotFound();
+
+            // 2) update row fields
+            pay.DurationInYearsOverride = vm.DurationInYearsOverride;
+            // pay.IsActive = vm.IsActive; // if you want to allow status edit here
+            _uow.ProgramAcademicYears.Update(pay);
+            _uow.Save();
+
+            // 3) delete old semesters + levels, then recreate
+            DeleteLevelsAndSemesters(pay.Id);
+            RecreateLevelsAndSemesters(pay.Id, years, vm.Levels);
+
+            return RedirectToAction("Details", new { id = academicYearId });
+        }
+
+        private void DeleteLevelsAndSemesters(int programAcademicYearId)
+        {
+            // get levels of this join row
+            var levels = _uow.Levels.GetByProgramAcademicYearId(programAcademicYearId);
+
+            foreach (var level in levels)
+            {
+                // delete semesters of this level first
+                var semesters = _uow.Semesters.GetAll().Where(s => s.LevelId == level.Id).ToList();
+                foreach (var sem in semesters)
+                    _uow.Semesters.Delete(sem.Id);
+
+                _uow.Save();
+
+                // delete the level
+                _uow.Levels.Delete(level.Id);
+                _uow.Save();
+            }
+        }
+
+        private void RecreateLevelsAndSemesters(int programAcademicYearId, int years, List<LevelVM> postedLevels)
+        {
+            for (int i = 0; i < years; i++)
+            {
+                var lvlVm = (postedLevels != null && postedLevels.Count > i) ? postedLevels[i] : null;
+
+                var level = new Domain.Entities.Level
+                {
+                    ProgramAcademicYearId = programAcademicYearId,
+                    Order = i + 1,
+                    Name = !string.IsNullOrWhiteSpace(lvlVm?.Name) ? lvlVm.Name : $"Year {i + 1}",
+                    Code = !string.IsNullOrWhiteSpace(lvlVm?.Code) ? lvlVm.Code : $"L{i + 1}",
+                };
+
+                _uow.Levels.Insert(level);
+                _uow.Save(); // ensures level.Id
+
+                var s1 = new Domain.Entities.Semester
+                {
+                    LevelId = level.Id,
+                    Order = 1,
+                    Name = "Semester 1"
+                };
+
+                var s2 = new Domain.Entities.Semester
+                {
+                    LevelId = level.Id,
+                    Order = 2,
+                    Name = "Semester 2"
+                };
+
+                _uow.Semesters.Insert(s1);
+                _uow.Semesters.Insert(s2);
+                _uow.Save();
+            }
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ToggleProgramActive(int academicYearId, int programId)
+        {
+            // get the ProgramAcademicYear row (the join table)
+            var row = _uow.ProgramAcademicYears
+                         .GetAll()
+                         .FirstOrDefault(x => x.AcademicYearId == academicYearId && x.ProgramId == programId);
+
+            if (row == null) return HttpNotFound();
+
+            row.IsActive = !row.IsActive;
+
+            _uow.Save(); 
+
+            return RedirectToAction("Details", new { id = academicYearId });
+        }
+
     }
 }

@@ -1,5 +1,6 @@
 ﻿@model systeme_gestion_isga.Features.AcademicYear.ViewModels.AcademicYearVM
 @using systeme_gestion_isga.Features.Program.ViewModels
+
 @{
     ViewBag.Title = "Detail of Academic Year";
 }
@@ -13,9 +14,9 @@
         </a>
     </div>
 
+    <!-- Academic Year Info -->
     <div class="card border bg-body-tertiary">
         <div class="card-body p-4">
-
             <div class="row g-3">
                 <div class="col-md-6">
                     <label class="form-label text-white">Name</label>
@@ -38,7 +39,6 @@
 
                 <div class="col-md-6 d-flex flex-column">
                     <label class="form-label text-white">Is Active</label>
-
                     <div class="mt-2">
                         @if (Model.IsActive)
                         {
@@ -58,49 +58,10 @@
                     </a>
                 </div>
             </div>
-
         </div>
     </div>
 
-    @using (Html.BeginForm("AddProgramToYear", "AcademicYear", FormMethod.Post, new { id = "programForm", @class = "mb-4 d-none" }))
-    {
-        @Html.AntiForgeryToken()
-        @Html.Hidden("AcademicYearId", Model.Id)
-
-        <div class="border rounded p-3 bg-dark">
-
-            <h6 class="text-white mb-3">
-                <i data-lucide="plus-circle"></i>
-                Add Program to this Academic Year
-            </h6>
-
-            <div class="row g-3">
-
-                <div class="col-md-6">
-                    <label class="form-label text-white">Role</label>
-                    @Html.DropDownListFor(
-                        m => m.Role,
-                        new SelectList(Enum.GetValues(typeof(ProgramVM))),
-                        new { @class = "form-select", @id = "roleSelect" }
-                    )
-                    @Html.ValidationMessageFor(m => m.Role, "", new { @class = "text-danger small" })
-                </div>
-
-                <div class="col-12 d-flex justify-content-end gap-2">
-                    <button type="button" class="btn btn-outline-secondary" onclick="toggleProgramForm()">
-                        Cancel
-                    </button>
-
-                    <button type="submit" class="btn btn-light">
-                        <i data-lucide="save"></i>
-                        Submit
-                    </button>
-                </div>
-
-            </div>
-        </div>
-    }
-
+    <!-- Add / Edit Program in this Academic Year -->
     <!-- Programs for this Academic Year -->
     <div class="card border bg-body-tertiary mt-4">
         <div class="card-body p-4">
@@ -111,10 +72,15 @@
                     Programs in this Academic Year
                 </h5>
 
-                <button class="btn btn-sm btn-outline-light" type="button" onclick="toggleProgramForm()">
+                <button class="btn btn-sm btn-outline-light"
+                        type="button"
+                        onclick="openAddModal()"
+                        data-bs-toggle="modal"
+                        data-bs-target="#programModal">
                     <i data-lucide="plus"></i>
                     Add Program
                 </button>
+
             </div>
 
             <div class="table-responsive">
@@ -125,18 +91,78 @@
                             <th>Program Name</th>
                             <th>Code</th>
                             <th>Duration</th>
-                            <th>Levels</th>
                             <th>Status</th>
                             <th style="width: 150px" class="text-end">Actions</th>
                         </tr>
                     </thead>
+
                     <tbody>
-                        <tr class="text-muted text-center">
-                            <td colspan="7">
-                                <i data-lucide="database" class="mb-2"></i>
-                                <div>No programs assigned to this academic year yet</div>
-                            </td>
-                        </tr>
+                        @if (Model.Programs != null && Model.Programs.Any())
+                        {
+                            foreach (var p in Model.Programs)
+                            {
+                                <tr>
+                                    <td>@p.ProgramId</td>
+                                    <td>@p.Name</td>
+                                    <td>@p.Code</td>
+                                    <td>@p.DurationInYearsOverride</td>
+                                    <td>
+                                        @if (p.IsActive)
+                                        {
+                                            <span class="badge bg-success">Active</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Inactive</span>
+                                        }
+                                    </td>
+
+                                    <td class="text-end d-flex justify-content-end gap-2">
+                                        <!-- Edit inside same page -->
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-light"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#programModal"
+                                                onclick="openEditFromRow(this)"
+                                                data-programid="@p.ProgramId"
+                                                data-programname="@p.Name"
+                                                data-payid="@p.Id"
+                                                data-duration="@p.DurationInYearsOverride"
+                                                data-levels="@string.Join("|",
+                                        (p.Levels ?? new List<systeme_gestion_isga.Features.AcademicYear.ViewModels.LevelVM>())
+                                            .OrderBy(x => x.Order)
+                                            .Select(l => $"{l.Order}~{l.Name}~{l.Code}"))">
+                                            <i data-lucide="pencil"></i>
+                                        </button>
+
+
+                                        <!-- Toggle Active -->
+                                        @using (Html.BeginForm("ToggleProgramActive", "AcademicYear", FormMethod.Post, new { @class = "d-inline" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="academicYearId" value="@Model.Id" />
+                                            <input type="hidden" name="programId" value="@p.ProgramId" />
+
+                                            <button type="submit"
+                                                    class="btn btn-sm @(p.IsActive ? "btn-outline-warning" : "btn-outline-success")"
+                                                    onclick="return confirm('@(p.IsActive ? "Deactivate this program for this year?" : "Activate this program for this year?")');">
+                                                <i data-lucide="power"></i>
+                                                @(p.IsActive ? "Deactivate" : "Activate")
+                                            </button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="text-muted text-center">
+                                <td colspan="6">
+                                    <i data-lucide="database" class="mb-2"></i>
+                                    <div>No programs assigned to this academic year yet</div>
+                                </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -144,11 +170,264 @@
         </div>
     </div>
 
+
+    <div class="modal fade" id="programModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content bg-dark border">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-white" id="programModalTitle">
+                        <i data-lucide="plus-circle"></i> Add Program
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                @using (Html.BeginForm("AddProgramToYear", "AcademicYear", FormMethod.Post, new { id = "programForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.Id)
+
+                    <input type="hidden" id="isEditMode" name="ProgramAcademicYearVM.IsEdit" value="false" />
+                    <input type="hidden" id="payId" name="ProgramAcademicYearVM.Id" value="0" />
+
+                    <div class="modal-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label text-white">Program</label>
+
+                                <select id="programSelect" name="ProgramAcademicYearVM.ProgramId" class="form-select">
+                                    <option value="">-- Select a program --</option>
+                                    @foreach (var prog in Model.ExcludedPrograms)
+                                    {
+                                        <option value="@prog.Id" data-duration="@prog.DurationInYears">
+                                            @prog.Id : @prog.Name
+                                        </option>
+                                    }
+                                </select>
+
+                                @Html.ValidationMessageFor(m => m.ProgramAcademicYearVM.ProgramId, "", new { @class = "text-danger small" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label text-white">Duration In Years</label>
+                                @Html.TextBoxFor(m => m.ProgramAcademicYearVM.DurationInYearsOverride,
+                                    new { @class = "form-control", @type = "number", @min = "0", @placeholder = "0", @id = "durationOverride" })
+                                @Html.ValidationMessageFor(m => m.ProgramAcademicYearVM.DurationInYearsOverride, "", new { @class = "text-danger small" })
+                            </div>
+
+                            <div id="levelFields" class="col-12 d-none">
+                                <hr class="border-secondary my-3" />
+                                <h6 class="text-white fw-bold mb-3">
+                                    <i data-lucide="layers"></i> Levels
+                                </h6>
+                                <div id="levels"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer border-secondary">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit" class="btn btn-light">
+                            <i data-lucide="save"></i>
+                            Submit
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
 </div>
 
+
+
+
+
 <script>
-    function toggleProgramForm() {
-        const form = document.getElementById("programForm");
-        form.classList.toggle("d-none");
+    // Keep original DB levels when editing (so changing duration doesn't wipe them)
+    let editSeedLevels = null;
+
+    function resetProgramModal() {
+        document.getElementById("programModalTitle").innerHTML = '<i data-lucide="plus-circle"></i> Add Program';
+
+        document.getElementById("isEditMode").value = "false";
+        document.getElementById("payId").value = "0";
+        editSeedLevels = null;
+
+        const programSelect = document.getElementById("programSelect");
+        programSelect.removeAttribute("disabled");
+        programSelect.value = "";
+
+        // remove injected options (edit-only)
+        programSelect.querySelectorAll('option[data-edit-added="1"]').forEach(o => o.remove());
+
+        document.getElementById("durationOverride").value = "";
+        document.getElementById("levels").innerHTML = "";
+        document.getElementById("levelFields").classList.add("d-none");
+
+        // re-render lucide icons if you're using lucide
+        if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+    }
+
+    function openAddModal() {
+        resetProgramModal();
+        // Title already set to Add
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const programSelect = document.getElementById("programSelect");
+        const durationInput = document.getElementById("durationOverride");
+        const levelFields = document.getElementById("levelFields");
+        const levelsDiv = document.getElementById("levels");
+        const programModalEl = document.getElementById("programModal");
+
+        if (!programSelect || !durationInput || !levelFields || !levelsDiv || !programModalEl) return;
+
+        function snapshotCurrentLevels() {
+            const existing = [];
+            levelsDiv.querySelectorAll('[name^="ProgramAcademicYearVM.Levels["]').forEach(inp => {
+                const m = inp.name.match(/Levels\[(\d+)\]\.(Name|Code|Order)/);
+                if (!m) return;
+                const idx = parseInt(m[1], 10);
+                const prop = m[2];
+                existing[idx] = existing[idx] || {};
+                existing[idx][prop] = inp.value;
+            });
+            return existing;
+        }
+
+        function renderLevelsUnified(years, seedLevels = null) {
+            const typed = snapshotCurrentLevels();
+
+            levelsDiv.innerHTML = "";
+
+            if (!years || years <= 0) {
+                levelFields.classList.add("d-none");
+                return;
+            }
+
+            levelFields.classList.remove("d-none");
+
+            for (let i = 0; i < years; i++) {
+                const nameVal = (typed[i]?.Name ?? seedLevels?.[i]?.name ?? "");
+                const codeVal = (typed[i]?.Code ?? seedLevels?.[i]?.code ?? "");
+
+                levelsDiv.innerHTML += `
+                    <div class="py-2">
+                        <h6 class="text-white fw-bold mb-3">Level N°${i + 1}</h6>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label text-white">Level Name</label>
+                                <input class="form-control"
+                                       name="ProgramAcademicYearVM.Levels[${i}].Name"
+                                       value="${String(nameVal).replace(/"/g, '&quot;')}"
+                                       placeholder="AP${i + 1}" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label text-white">Code</label>
+                                <input class="form-control"
+                                       name="ProgramAcademicYearVM.Levels[${i}].Code"
+                                       value="${String(codeVal).replace(/"/g, '&quot;')}"
+                                       placeholder="AP${i + 1}1" />
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label text-white">Order</label>
+                                <input class="form-control"
+                                       readonly
+                                       type="number"
+                                       name="ProgramAcademicYearVM.Levels[${i}].Order"
+                                       value="${i + 1}" />
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                if (i !== years - 1) levelsDiv.innerHTML += "<hr class='border-secondary my-3' />";
+            }
+
+            if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
+        }
+
+        function syncDurationFromSelectedProgram() {
+            // Add mode => no seed
+            editSeedLevels = null;
+
+            const opt = programSelect.options[programSelect.selectedIndex];
+            const duration = opt?.dataset?.duration;
+
+            durationInput.value = duration || "";
+            renderLevelsUnified(parseInt(durationInput.value, 10) || 0, null);
+        }
+
+        programSelect.addEventListener("change", syncDurationFromSelectedProgram);
+
+        durationInput.addEventListener("input", function () {
+            renderLevelsUnified(parseInt(this.value, 10) || 0, editSeedLevels);
+        });
+
+        // expose renderer for openEditFromRow
+        window.__renderLevelsUnified = renderLevelsUnified;
+
+        // Reset modal on close
+        programModalEl.addEventListener("hidden.bs.modal", function () {
+            resetProgramModal();
+        });
+    });
+
+    function openEditFromRow(btn) {
+        document.getElementById("programModalTitle").innerHTML = '<i data-lucide="pencil"></i> Edit Program';
+
+        document.getElementById("isEditMode").value = "true";
+        document.getElementById("payId").value = btn.dataset.payid || "0";
+
+        const programSelect = document.getElementById("programSelect");
+        const durationInput = document.getElementById("durationOverride");
+
+        const programId = btn.dataset.programid;
+        const programName = btn.dataset.programname || "";
+        const duration = btn.dataset.duration || 0;
+        const levelsRaw = btn.dataset.levels || "";
+
+        // Ensure the option exists in select (since select shows only excluded programs)
+        let opt = programSelect.querySelector(`option[value="${programId}"]`);
+        if (!opt) {
+            opt = document.createElement("option");
+            opt.value = programId;
+            opt.textContent = `${programId} : ${programName}`;
+            opt.setAttribute("data-edit-added", "1");
+            programSelect.appendChild(opt);
+        }
+
+        programSelect.value = programId;
+        programSelect.setAttribute("disabled", "disabled");
+
+        durationInput.value = duration;
+
+        // Parse levels from data-levels
+        const existingLevels = [];
+        if (levelsRaw.trim() !== "") {
+            levelsRaw.split("|").forEach(part => {
+                const [order, name, code] = part.split("~");
+                existingLevels.push({
+                    order: parseInt(order, 10),
+                    name: name || "",
+                    code: code || ""
+                });
+            });
+        }
+
+        editSeedLevels = existingLevels;
+
+        if (window.__renderLevelsUnified) {
+            window.__renderLevelsUnified(parseInt(durationInput.value, 10) || 0, editSeedLevels);
+        }
+
+        if (window.lucide && window.lucide.createIcons) window.lucide.createIcons();
     }
 </script>

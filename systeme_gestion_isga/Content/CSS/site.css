@@ -33,8 +33,16 @@ body {
 }
 
 .accordion-button:hover {
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2) !important;
 }
 .accordion-body a:hover {
     background: rgba(0,0,0,0.2) !important;
 }
+
+/* Force scroll inside the modal body */
+#programModal .modal-body {
+    max-height: calc(100vh - 200px) !important; /* header+footer space */
+    overflow-y: auto !important;
+}
+
+

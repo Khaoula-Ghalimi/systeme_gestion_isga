@@ -150,18 +150,27 @@
     <Content Include="Features\AcademicYear\Views\Edit.cshtml" />
     <Content Include="Features\AcademicYear\Views\Details.cshtml" />
     <None Include="Features\AcademicYear\Views\Index.cshtml" />
+    <Compile Include="Features\AcademicYear\ViewModels\LevelVM.cs" />
     <Compile Include="Features\AcademicYear\ViewModels\ProgramAcademicYearVM.cs" />
+    <Compile Include="Features\AcademicYear\ViewModels\ProgramVM.cs" />
+    <Compile Include="Features\AcademicYear\ViewModels\SemesterVM.cs" />
     <Compile Include="Features\Auth\Controllers\AuthController.cs" />
     <Compile Include="Features\Auth\ViewModels\LoginViewModel.cs" />
     <Compile Include="Features\Auth\ViewModels\UserVM.cs" />
     <Compile Include="Features\Dashboard\Controllers\DashboardController.cs" />
     <Compile Include="Features\FeatureViewEngine.cs" />
+    <Compile Include="Features\Module\Controllers\ModuleController.cs" />
+    <Compile Include="Features\Module\ViewModels\ModuleSubjectVM.cs" />
+    <Compile Include="Features\Module\ViewModels\ModuleVM.cs" />
+    <Compile Include="Features\Module\ViewModels\SubjectLookupVM.cs" />
     <Compile Include="Features\Program\Controllers\ProgramController.cs" />
-    <Compile Include="Features\Program\ViewModels\LevelVM.cs" />
     <Compile Include="Features\Program\ViewModels\ProgramVM.cs" />
-    <Compile Include="Features\Program\ViewModels\SemesterVM.cs" />
+    <Compile Include="Features\Semester\Controllers\SemesterController.cs" />
+    <Compile Include="Features\Semester\ViewModels\AcademicYearHierarchyVM.cs" />
     <Compile Include="Features\Shared\ViewModels\AccordionMenuVM.cs" />
     <Compile Include="Features\Shared\ViewModels\MenuItemVM.cs" />
+    <Compile Include="Features\Subject\Controllers\SubjectController.cs" />
+    <Compile Include="Features\Subject\ViewModels\SubjectVM.cs" />
     <Compile Include="Features\User\Controllers\UserController.cs" />
     <Compile Include="Features\User\ViewModels\StudentVM.cs" />
     <Compile Include="Features\User\ViewModels\TeacherVM.cs" />
@@ -178,12 +187,22 @@
     <Compile Include="Infrastructure\Repositories\IGenericRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Levels\ILevelRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Levels\LevelRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\ModuleSubjects\IModuleSubjectRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\ModuleSubjects\ModuleSubjectRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Modules\IModuleRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Modules\ModuleRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\ProgramAcademicYears\IProgramAcademicYearRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\ProgramAcademicYears\ProgramAcademicYearRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Programs\IProgramRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Programs\ProgramRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\SemesterModules\ISemesterModuleRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\SemesterModules\SemesterModuleRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Semesters\ISemesterRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Semesters\SemesterRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Students\IStudentRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Students\StudentRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Subjects\ISubjectRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Subjects\SubjectRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Teachers\ITeacherRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Teachers\TeacherRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Users\IUserRepository.cs" />
@@ -223,6 +242,14 @@
     <Compile Include="Migrations\202601121346285_AddProgramAcademicYearAndRewireLevels.cs" />
     <Compile Include="Migrations\202601121346285_AddProgramAcademicYearAndRewireLevels.Designer.cs">
       <DependentUpon>202601121346285_AddProgramAcademicYearAndRewireLevels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601130855371_DeleteUnnecesseryColumnsProgramAcademicYear.cs" />
+    <Compile Include="Migrations\202601130855371_DeleteUnnecesseryColumnsProgramAcademicYear.Designer.cs">
+      <DependentUpon>202601130855371_DeleteUnnecesseryColumnsProgramAcademicYear.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601132037452_FixMissingThings.cs" />
+    <Compile Include="Migrations\202601132037452_FixMissingThings.Designer.cs">
+      <DependentUpon>202601132037452_FixMissingThings.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -276,6 +303,24 @@
     <Content Include="Features\Program\Views\Edit.cshtml" />
     <Content Include="Features\AcademicYear\Views\_ViewStart.cshtml" />
     <Content Include="Features\AcademicYear\Views\web.config" />
+    <Content Include="Features\Module\Views\_ViewStart.cshtml" />
+    <Content Include="Features\Module\Views\web.config" />
+    <Content Include="Features\Module\Views\Create.cshtml" />
+    <Content Include="Features\Module\Views\Edit.cshtml" />
+    <Content Include="Features\Module\Views\Index.cshtml" />
+    <Content Include="Features\Subject\ViewModels\.gitkeep" />
+    <Content Include="Features\Subject\Views\_ViewStart.cshtml" />
+    <Content Include="Features\Subject\Views\web.config" />
+    <Content Include="Features\Subject\Views\Create.cshtml" />
+    <Content Include="Features\Subject\Views\Edit.cshtml" />
+    <Content Include="Features\Subject\Views\Index.cshtml" />
+    <Content Include="Features\Semester\Controllers\.gitkeep" />
+    <Content Include="Features\Semester\ViewModels\.gitkeep" />
+    <Content Include="Features\Semester\Views\_ViewStart.cshtml" />
+    <Content Include="Features\Semester\Views\web.config" />
+    <Content Include="Features\Semester\Views\Index.cshtml" />
+    <Compile Include="Features\Semester\ViewModels\SemesterEditModulesVM.cs" />
+    <Content Include="Features\Semester\Views\Edit.cshtml" />
     <None Include="packages.config" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
@@ -297,6 +342,8 @@
     <Folder Include="App_Data\" />
     <Folder Include="Views\AcademicYear\" />
     <Folder Include="Views\Program\" />
+    <Folder Include="Views\Semester\" />
+    <Folder Include="Views\Subject\" />
     <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>
@@ -323,6 +370,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202601121346285_AddProgramAcademicYearAndRewireLevels.resx">
       <DependentUpon>202601121346285_AddProgramAcademicYearAndRewireLevels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601130855371_DeleteUnnecesseryColumnsProgramAcademicYear.resx">
+      <DependentUpon>202601130855371_DeleteUnnecesseryColumnsProgramAcademicYear.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601132037452_FixMissingThings.resx">
+      <DependentUpon>202601132037452_FixMissingThings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

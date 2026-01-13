@@ -8,7 +8,9 @@
     {
         Id = "dashboardMenu",
         TriggerText = "Dashboard",
-        TriggerIcon = "layout-dashboard"
+        TriggerIcon = "layout-dashboard",
+        Controller = "Dashboard",
+        Action = "Index"
     })
 
 
@@ -25,12 +27,56 @@
 
     @Html.Partial("_AccordionMenu", new AccordionMenuVM
     {
+        Id = "academicYearMenu",
+        TriggerText = "Academic Year",
+        TriggerIcon = "calendar-range",
+        Items = new List<MenuItemVM> {
+            new MenuItemVM { Text="List Academic Years", Icon="list", Controller="AcademicYear", Action="Index" },
+            new MenuItemVM { Text="Add Academic Year",   Icon="circle-plus", Controller="AcademicYear", Action="Create" },
+        }
+    })
+
+
+
+
+    @Html.Partial("_AccordionMenu", new AccordionMenuVM
+    {
         Id = "programsMenu",
         TriggerText = "Programs",
         TriggerIcon = "graduation-cap",
         Items = new List<MenuItemVM> {
             new MenuItemVM { Text="List Program", Icon="list", Controller="Program", Action="Index" },
             new MenuItemVM { Text="Add Program",   Icon="circle-plus", Controller="Program", Action="Create" },
+        }
+    })
+
+    @Html.Partial("_AccordionMenu", new AccordionMenuVM
+    {
+        Id = "semesterMenu",
+        TriggerText = "Semesters",
+        TriggerIcon = "calendar-days",
+        Controller = "Semester",
+        Action = "Index"
+    })
+
+    @Html.Partial("_AccordionMenu", new AccordionMenuVM
+    {
+        Id = "modulesMenu",
+        TriggerText = "Modules",
+        TriggerIcon = "grid",
+        Items = new List<MenuItemVM> {
+            new MenuItemVM { Text="List Module", Icon="list", Controller="Module", Action="Index" },
+            new MenuItemVM { Text="Add Module",   Icon="circle-plus", Controller="Module", Action="Create" },
+        }
+    })
+    @Html.Partial("_AccordionMenu", new AccordionMenuVM
+    {
+        Id = "subjectsMenu",
+        TriggerText = "Subjects",
+        TriggerIcon = "book",
+        Items = new List<MenuItemVM> {
+            new MenuItemVM { Text="List Subject", Icon="list", Controller="Subject", Action="Index" },
+            new MenuItemVM { Text="Add Subject",   Icon="circle-plus", Controller="Subject", Action="Create" },
         }
     })
 </div>

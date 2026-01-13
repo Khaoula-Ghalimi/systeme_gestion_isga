@@ -10,6 +10,9 @@ namespace systeme_gestion_isga.Infrastructure.Repositories.Levels
 {
     public interface ILevelRepository : IGenericRepository<Level>
     {
-        List<Level> GetByProgramId(int programId);
+        List<Level> GetByProgramAcademicYearId(int programAcademicYearId);
+
+
+
     }
 }

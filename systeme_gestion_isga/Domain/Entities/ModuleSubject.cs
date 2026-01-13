@@ -7,7 +7,7 @@ using System.Web;
 
 namespace systeme_gestion_isga.Domain.Entities
 {
-    public class ModuleSubject
+    public class ModuleSubject : ModelBase
     {
         [Key]
         public int Id { get; set; }

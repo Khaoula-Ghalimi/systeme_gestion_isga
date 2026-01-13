@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
 
 namespace systeme_gestion_isga.Domain.Entities
 {
-    public class SemesterModule : ModelBase
+    public class SemesterModule
     {
-        [Key, Column(Order = 0)]
+        [Key]
+        public int Id { get; set; }
+
+        [Index("IX_Semester_Module", 1, IsUnique = true)]
         public int SemesterId { get; set; }
 
-        [Key, Column(Order = 1)]
+        [Index("IX_Semester_Module", 2, IsUnique = true)]
         public int ModuleId { get; set; }
 
         [ForeignKey(nameof(SemesterId))]
@@ -21,5 +20,7 @@ namespace systeme_gestion_isga.Domain.Entities
         [ForeignKey(nameof(ModuleId))]
         public virtual Module Module { get; set; }
 
+        // extra fields if you want later (Coefficient, IsActive, etc.)
+        // public bool IsActive { get; set; } = true;
     }
 }

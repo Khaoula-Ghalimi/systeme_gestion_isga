@@ -16,5 +16,7 @@ namespace systeme_gestion_isga.Infrastructure.Repositories.AcademicYears
         public AcademicYearRepository() : this(new AppDbContext())
         {
         }
+
+        
     }
 }

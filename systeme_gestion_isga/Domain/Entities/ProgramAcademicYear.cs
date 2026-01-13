@@ -18,12 +18,6 @@ namespace systeme_gestion_isga.Domain.Entities
         public int AcademicYearId { get; set; }
 
         // Optional overrides (if program changes name/code/duration in that year)
-        [StringLength(100)]
-        public string DisplayName { get; set; }
-
-        [StringLength(10)]
-        public string DisplayCode { get; set; }
-
         public int? DurationInYearsOverride { get; set; }
 
         public bool IsActive { get; set; } = true;

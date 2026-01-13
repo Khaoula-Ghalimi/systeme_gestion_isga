@@ -2,32 +2,52 @@
 
 @{
     bool hasItems = Model.Items != null && Model.Items.Any();
+    string url = !hasItems && Model.Controller != null
+        ? Url.Action(Model.Action, Model.Controller, Model.RouteValues)
+        : "#";
 }
 
 
 <div class="accordion-item border-0">
-    <h2 class="accordion-header" type="button" data-bs-toggle="collapse" data-bs-target="#@Model.Id">
-        <button class="accordion-button collapsed text-white p-2">
-            <div class="d-flex align-items-center w-100">
-                <i data-lucide="@Model.TriggerIcon" class="me-2"></i>
-                <p class="m-0">@Model.TriggerText</p>
-                <div class="flex-grow-1"></div>
-                @if (hasItems)
-                {
-                    <i data-lucide="chevron-down"></i>
-                }
-            </div>
-        </button>
 
+    <h2 class="accordion-header">
+        @if (hasItems)
+        {
+            <!-- Accordion trigger -->
+            <button class="accordion-button collapsed text-white p-2"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#@Model.Id">
+                <div class="d-flex align-items-center w-100">
+                    <i data-lucide="@Model.TriggerIcon" class="me-2"></i>
+                    <p class="m-0">@Model.TriggerText</p>
+                    <div class="flex-grow-1"></div>
+                    <i data-lucide="chevron-down"></i>
+                </div>
+            </button>
+        }
+        else
+        {
+            <!-- Normal link -->
+            <a href="@url"
+               class="accordion-button collapsed text-white p-2 text-decoration-none bg-transparent shadow-none border-0"
+               style="font-weight: normal;">
+                <div class="d-flex align-items-center w-100">
+                    <i data-lucide="@Model.TriggerIcon" class="me-2"></i>
+                    <p class="m-0">@Model.TriggerText</p>
+                </div>
+            </a>
+        }
     </h2>
 
-    @if (hasItems) 
+    @if (hasItems)
     {
         <div class="accordion-collapse collapse" id="@Model.Id" data-bs-parent="#@Model.ParentAccordionId">
-            <div class="accordion-body">
+            <div class="accordion-body p-0">
                 @foreach (var item in Model.Items)
                 {
-                    <a class="list-group-item list-group-item-action text-white px-4 py-1" href="@Url.Action(item.Action,item.Controller, item.RouteValues)">
+                    <a class="list-group-item list-group-item-action text-white px-4 py-1"
+                       href="@Url.Action(item.Action, item.Controller, item.RouteValues)">
                         <i data-lucide="@item.Icon" class="me-2"></i> @item.Text
                     </a>
                 }
