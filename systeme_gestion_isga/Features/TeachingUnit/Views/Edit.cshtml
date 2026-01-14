@@ -1,0 +1,219 @@
+﻿@model systeme_gestion_isga.Features.TeachingUnit.ViewModels.TeachingUnitVM
+
+@{
+    ViewBag.Title = "Edit Teaching Unit";
+    var levelToYear = (Dictionary<int, int>)ViewBag.LevelToAcademicYear;
+    var semToLevel = (Dictionary<int, int>)ViewBag.SemesterToLevel;
+    var moduleToSems = (Dictionary<int, List<int>>)ViewBag.ModuleSubjectToSemesters;
+    var msToModule = (Dictionary<int, int>)ViewBag.ModuleSubjectToModule;
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex align-content-center justify-content-between mb-5">
+        <h4 class="fw-bold text-white mb-0">Edit Teaching Unit</h4>
+        <a href='@Url.Action("Index")' class="btn btn-outline-light">
+            <i data-lucide="arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="card border bg-body-tertiary">
+        <div class="card-body p-4">
+            @using (Html.BeginForm("Edit", "TeachingUnit", FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.AcademicYearId)</label>
+                    @Html.DropDownListFor(
+                        m => m.AcademicYearId,
+                        Model.AcademicYears,
+                        "-- Select Academic Year --",
+                        new { @class = "form-select", id = "AcademicYearId" }
+                    )
+                    @Html.ValidationMessageFor(m => m.AcademicYearId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.LevelId)</label>
+                    <select id="LevelId" name="LevelId" class="form-select">
+                        <option value="">-- Select Level --</option>
+                        @foreach (var l in Model.Levels)
+                        {
+                            var levelId = int.Parse(l.Value);
+                            var yearId = levelToYear[levelId];
+
+                            // preselect
+                            var selected = (Model.LevelId == levelId) ? "selected" : "";
+
+                            <option value="@l.Value" data-year="@yearId" @selected>@l.Text</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(m => m.LevelId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.SemesterId)</label>
+                    <select id="SemesterId" name="SemesterId" class="form-select">
+                        <option value="">-- Select Semester --</option>
+                        @foreach (var s in Model.Semesters)
+                        {
+                            var semId = int.Parse(s.Value);
+                            var levelId = semToLevel[semId];
+
+                            var selected = (Model.SemesterId == semId) ? "selected" : "";
+
+                            <option value="@s.Value" data-level="@levelId" @selected>@s.Text</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(m => m.SemesterId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.TeacherId)</label>
+                    @Html.DropDownListFor(
+                        m => m.TeacherId,
+                        Model.Teachers,
+                        "-- Select Teacher --",
+                        new { @class = "form-select", id = "TeacherId" }
+                    )
+                    @Html.ValidationMessageFor(m => m.TeacherId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.ModuleMatiereId)</label>
+                    <select id="ModuleMatiereId" name="ModuleMatiereId" class="form-select">
+                        <option value="">-- Select Module / Matiere --</option>
+
+                        @foreach (var ms in Model.ModuleMatieres)
+                        {
+                            var moduleSubjectId = int.Parse(ms.Value);
+
+                            // moduleId for this moduleSubjectId
+                            var moduleId = msToModule[moduleSubjectId];
+
+                            var sems = moduleToSems.ContainsKey(moduleId) ? moduleToSems[moduleId] : new List<int>();
+                            var semsCsv = string.Join(",", sems);
+
+                            var selected = (Model.ModuleMatiereId == moduleSubjectId) ? "selected" : "";
+
+                            <option value="@ms.Value" data-sems="@semsCsv" @selected>@ms.Text</option>
+                        }
+                    </select>
+
+                    @Html.ValidationMessageFor(m => m.ModuleMatiereId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i data-lucide="x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-light">
+                        <i data-lucide="save"></i>
+                        Update
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const yearSel = document.getElementById("AcademicYearId");
+        const levelSel = document.getElementById("LevelId");
+        const semSel = document.getElementById("SemesterId");
+        const moduleSel = document.getElementById("ModuleMatiereId");
+
+        const allLevelOptions = Array.from(levelSel.querySelectorAll("option")).slice(1);
+        const allSemOptions = Array.from(semSel.querySelectorAll("option")).slice(1);
+        const allModuleOptions = Array.from(moduleSel.querySelectorAll("option")).slice(1);
+
+        function resetSelect(selectEl, placeholder, keepValue) {
+            const old = selectEl.value;
+            selectEl.value = keepValue ? old : "";
+            if (selectEl.options.length > 0) selectEl.options[0].textContent = placeholder;
+        }
+
+        function filterLevels(keepSelected) {
+            const yearId = yearSel.value;
+            resetSelect(levelSel, "-- Select Level --", keepSelected);
+            if (!keepSelected) resetSelect(semSel, "-- Select Semester --", false);
+            if (!keepSelected) resetSelect(moduleSel, "-- Select Module / Matiere --", false);
+
+            allLevelOptions.forEach(opt => opt.hidden = true);
+            if (!yearId) return;
+
+            allLevelOptions.forEach(opt => {
+                opt.hidden = (opt.dataset.year !== yearId);
+            });
+
+            // ensure selected option isn't hidden (edit mode)
+            if (keepSelected && levelSel.value) {
+                const selectedOpt = levelSel.querySelector(`option[value="${levelSel.value}"]`);
+                if (selectedOpt) selectedOpt.hidden = false;
+            }
+        }
+
+        function filterSemesters(keepSelected) {
+            const levelId = levelSel.value;
+            resetSelect(semSel, "-- Select Semester --", keepSelected);
+            if (!keepSelected) resetSelect(moduleSel, "-- Select Module / Matiere --", false);
+
+            allSemOptions.forEach(opt => opt.hidden = true);
+            if (!levelId) return;
+
+            allSemOptions.forEach(opt => {
+                opt.hidden = (opt.dataset.level !== levelId);
+            });
+
+            if (keepSelected && semSel.value) {
+                const selectedOpt = semSel.querySelector(`option[value="${semSel.value}"]`);
+                if (selectedOpt) selectedOpt.hidden = false;
+            }
+        }
+
+        function filterModules(keepSelected) {
+            const semId = semSel.value;
+            resetSelect(moduleSel, "-- Select Module / Matiere --", keepSelected);
+
+            allModuleOptions.forEach(opt => opt.hidden = true);
+            if (!semId) return;
+
+            allModuleOptions.forEach(opt => {
+                const sems = (opt.dataset.sems || "").split(",").filter(Boolean);
+                opt.hidden = !sems.includes(semId);
+            });
+
+            if (keepSelected && moduleSel.value) {
+                const selectedOpt = moduleSel.querySelector(`option[value="${moduleSel.value}"]`);
+                if (selectedOpt) selectedOpt.hidden = false;
+            }
+        }
+
+        yearSel.addEventListener("change", () => {
+            filterLevels(false);
+            filterSemesters(false);
+            filterModules(false);
+        });
+
+        levelSel.addEventListener("change", () => {
+            filterSemesters(false);
+            filterModules(false);
+        });
+
+        semSel.addEventListener("change", () => {
+            filterModules(false);
+        });
+
+        // ✅ EDIT MODE INITIALIZATION:
+        // We want current selections to remain visible, so we filter but keep selected.
+        filterLevels(true);
+        filterSemesters(true);
+        filterModules(true);
+
+        if (window.lucide) lucide.createIcons();
+    })();
+</script>

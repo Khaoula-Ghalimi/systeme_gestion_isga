@@ -14,7 +14,7 @@
         @if (hasItems)
         {
             <!-- Accordion trigger -->
-            <button class="accordion-button collapsed text-white p-2"
+            <button class="accordion-button collapsed text-white px-2 py-3"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#@Model.Id">
@@ -30,7 +30,7 @@
         {
             <!-- Normal link -->
             <a href="@url"
-               class="accordion-button collapsed text-white p-2 text-decoration-none bg-transparent shadow-none border-0"
+               class="accordion-button collapsed text-white px-2 py-3 text-decoration-none bg-transparent shadow-none border-0"
                style="font-weight: normal;">
                 <div class="d-flex align-items-center w-100">
                     <i data-lucide="@Model.TriggerIcon" class="me-2"></i>
@@ -46,7 +46,7 @@
             <div class="accordion-body p-0">
                 @foreach (var item in Model.Items)
                 {
-                    <a class="list-group-item list-group-item-action text-white px-4 py-1"
+                    <a class="list-group-item list-group-item-action text-white px-4 py-2"
                        href="@Url.Action(item.Action, item.Controller, item.RouteValues)">
                         <i data-lucide="@item.Icon" class="me-2"></i> @item.Text
                     </a>

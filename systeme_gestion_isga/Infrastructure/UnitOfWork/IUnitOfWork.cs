@@ -14,6 +14,7 @@ using systeme_gestion_isga.Infrastructure.Repositories.Semesters;
 using systeme_gestion_isga.Infrastructure.Repositories.Students;
 using systeme_gestion_isga.Infrastructure.Repositories.Subjects;
 using systeme_gestion_isga.Infrastructure.Repositories.Teachers;
+using systeme_gestion_isga.Infrastructure.Repositories.TeachingUnits;
 
 namespace systeme_gestion_isga.Infrastructure.UnitOfWork
 {
@@ -35,6 +36,8 @@ namespace systeme_gestion_isga.Infrastructure.UnitOfWork
         IModuleSubjectRepository ModuleSubjects { get; }
 
         ISemesterModuleRepository SemesterModules { get; }
+
+        ITeachingUnitRepository TeachingUnits { get; }
 
         int Save();
         void Dispose();

@@ -171,6 +171,8 @@
     <Compile Include="Features\Shared\ViewModels\MenuItemVM.cs" />
     <Compile Include="Features\Subject\Controllers\SubjectController.cs" />
     <Compile Include="Features\Subject\ViewModels\SubjectVM.cs" />
+    <Compile Include="Features\TeachingUnit\Controllers\TeachingUnitController.cs" />
+    <Compile Include="Features\TeachingUnit\ViewModels\TeachingUnitVM.cs" />
     <Compile Include="Features\User\Controllers\UserController.cs" />
     <Compile Include="Features\User\ViewModels\StudentVM.cs" />
     <Compile Include="Features\User\ViewModels\TeacherVM.cs" />
@@ -205,6 +207,8 @@
     <Compile Include="Infrastructure\Repositories\Subjects\SubjectRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Teachers\ITeacherRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Teachers\TeacherRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\TeachingUnits\ITeachingUnitRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\TeachingUnits\TeachingUnitRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Users\IUserRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Users\UserRepository.cs" />
     <Compile Include="Infrastructure\Security\RoleCookieModule.cs" />
@@ -321,6 +325,11 @@
     <Content Include="Features\Semester\Views\Index.cshtml" />
     <Compile Include="Features\Semester\ViewModels\SemesterEditModulesVM.cs" />
     <Content Include="Features\Semester\Views\Edit.cshtml" />
+    <Content Include="Features\TeachingUnit\Views\_ViewStart.cshtml" />
+    <Content Include="Features\TeachingUnit\Views\web.config" />
+    <Content Include="Features\TeachingUnit\Views\Create.cshtml" />
+    <Content Include="Features\TeachingUnit\Views\Index.cshtml" />
+    <Content Include="Features\TeachingUnit\Views\Edit.cshtml" />
     <None Include="packages.config" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
@@ -344,6 +353,7 @@
     <Folder Include="Views\Program\" />
     <Folder Include="Views\Semester\" />
     <Folder Include="Views\Subject\" />
+    <Folder Include="Views\TeachingUnit\" />
     <Folder Include="Views\User\" />
   </ItemGroup>
   <ItemGroup>

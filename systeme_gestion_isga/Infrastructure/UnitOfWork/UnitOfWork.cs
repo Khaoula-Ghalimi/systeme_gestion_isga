@@ -15,6 +15,7 @@ using systeme_gestion_isga.Infrastructure.Repositories.Semesters;
 using systeme_gestion_isga.Infrastructure.Repositories.Students;
 using systeme_gestion_isga.Infrastructure.Repositories.Subjects;
 using systeme_gestion_isga.Infrastructure.Repositories.Teachers;
+using systeme_gestion_isga.Infrastructure.Repositories.TeachingUnits;
 
 namespace systeme_gestion_isga.Infrastructure.UnitOfWork
 {
@@ -38,6 +39,7 @@ namespace systeme_gestion_isga.Infrastructure.UnitOfWork
             Subjects = new SubjectRepository(_context);
             ModuleSubjects = new ModuleSubjectRepository(_context);
             SemesterModules = new SemesterModuleRepository(_context);
+            TeachingUnits = new TeachingUnitRepository(_context);
         }
 
         // Optional parameterless ctor (if you’re not using DI yet)
@@ -60,6 +62,8 @@ namespace systeme_gestion_isga.Infrastructure.UnitOfWork
         public IModuleSubjectRepository ModuleSubjects { get; private set; }
 
         public ISemesterModuleRepository SemesterModules { get; private set; }
+
+        public ITeachingUnitRepository TeachingUnits { get; private set; }
 
 
         public int Save()

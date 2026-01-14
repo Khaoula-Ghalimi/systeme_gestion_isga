@@ -79,6 +79,16 @@
             new MenuItemVM { Text="Add Subject",   Icon="circle-plus", Controller="Subject", Action="Create" },
         }
     })
+    @Html.Partial("_AccordionMenu", new AccordionMenuVM
+    {
+        Id = "teachingUnitsMenu",
+        TriggerText = "Teaching Units",
+        TriggerIcon = "book-open",
+        Items = new List<MenuItemVM> {
+            new MenuItemVM { Text="List Teaching Unit", Icon="list", Controller="TeachingUnit", Action="Index" },
+            new MenuItemVM { Text="Add Teaching Unit",   Icon="circle-plus", Controller="TeachingUnit", Action="Create" },
+        }
+    })
 </div>
 
 

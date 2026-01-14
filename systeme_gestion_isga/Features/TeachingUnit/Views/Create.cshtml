@@ -1,0 +1,202 @@
+﻿@model systeme_gestion_isga.Features.TeachingUnit.ViewModels.TeachingUnitVM
+
+@{
+    ViewBag.Title = "Create a Teaching Unit";
+    var levelToYear = (Dictionary<int, int>)ViewBag.LevelToAcademicYear;
+    var semToLevel = (Dictionary<int, int>)ViewBag.SemesterToLevel;
+    var moduleToSems = (Dictionary<int, List<int>>)ViewBag.ModuleSubjectToSemesters;
+
+
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex align-content-center justify-content-between mb-5">
+        <h4 class="fw-bold text-white mb-0">Create A Teaching Unit</h4>
+        <a href='@Url.Action("Index")' class="btn btn-outline-light">
+            <i data-lucide="arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="card border bg-body-tertiary">
+        <div class="card-body p-4">
+            @using (Html.BeginForm("Create", "TeachingUnit", FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.AcademicYearId)</label>
+                    @Html.DropDownListFor(
+                        m => m.AcademicYearId,
+                        Model.AcademicYears,
+                        "-- Select Academic Year --",
+                        new { @class = "form-select" }
+                    )
+                    @Html.ValidationMessageFor(m => m.AcademicYearId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.LevelId)</label>
+                    <select id="LevelId" name="LevelId" class="form-select">
+                        <option value="">-- Select Level --</option>
+                        @foreach (var l in Model.Levels)
+                        {
+                            var levelId = int.Parse(l.Value);
+                            var yearId = levelToYear[levelId];
+
+                            <option value="@l.Value" data-year="@yearId">@l.Text</option>
+                        }
+                    </select>
+
+                    @Html.ValidationMessageFor(m => m.LevelId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.SemesterId)</label>
+                    <select id="SemesterId" name="SemesterId" class="form-select">
+                        <option value="">-- Select Semester --</option>
+                        @foreach (var s in Model.Semesters)
+                        {
+                            var semId = int.Parse(s.Value);
+                            var levelId = semToLevel[semId];
+
+                            <option value="@s.Value" data-level="@levelId">@s.Text</option>
+                        }
+                    </select>
+                    @Html.ValidationMessageFor(m => m.SemesterId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.TeacherId)</label>
+                    @Html.DropDownListFor(
+                        m => m.TeacherId,
+                        Model.Teachers,
+                        "-- Select Teacher --",
+                        new { @class = "form-select" }
+                    )
+                    @Html.ValidationMessageFor(m => m.TeacherId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.ModuleMatiereId)</label>
+                    <select id="ModuleMatiereId" name="ModuleMatiereId" class="form-select">
+                        <option value="">-- Select Module / Matiere --</option>
+
+                        @foreach (var ms in Model.ModuleMatieres)
+                        {
+                            var moduleSubjectId = int.Parse(ms.Value);
+
+                            var moduleId = ((Dictionary<int, int>)ViewBag.ModuleSubjectToModule)[moduleSubjectId];
+
+                            var sems = moduleToSems.ContainsKey(moduleId) ? moduleToSems[moduleId] : new List<int>();
+                            var semsCsv = string.Join(",", sems);
+
+                            <option value="@ms.Value" data-sems="@semsCsv">@ms.Text</option>
+                        }
+                    </select>
+
+                    @Html.ValidationMessageFor(m => m.ModuleMatiereId, "", new { @class = "text-danger small" })
+
+                    @Html.ValidationMessageFor(m => m.ModuleMatiereId, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i data-lucide="x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-light">
+                        <i data-lucide="save"></i>
+                        Save
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    (function () {
+        const yearSel = document.getElementById("AcademicYearId");
+        const levelSel = document.getElementById("LevelId");
+        const semSel = document.getElementById("SemesterId");
+        const moduleSel = document.getElementById("ModuleMatiereId");
+        const allModuleOptions = Array.from(moduleSel.querySelectorAll("option")).slice(1);
+
+        const allLevelOptions = Array.from(levelSel.querySelectorAll("option")).slice(1);
+        const allSemOptions = Array.from(semSel.querySelectorAll("option")).slice(1);
+
+        function resetSelect(selectEl, placeholder) {
+            selectEl.value = "";
+            // Keep first placeholder option selected
+            if (selectEl.options.length > 0) selectEl.options[0].textContent = placeholder;
+        }
+
+        function filterLevels() {
+            const yearId = yearSel.value;
+            resetSelect(levelSel, "-- Select Level --");
+            resetSelect(semSel, "-- Select Semester --");
+
+            // hide all levels first
+            allLevelOptions.forEach(opt => opt.hidden = true);
+
+            if (!yearId) {
+                // no year => keep all hidden
+                return;
+            }
+
+            // show only matching levels
+            allLevelOptions.forEach(opt => {
+                opt.hidden = (opt.dataset.year !== yearId);
+            });
+        }
+
+        function filterSemesters() {
+            const levelId = levelSel.value;
+            resetSelect(semSel, "-- Select Semester --");
+
+            allSemOptions.forEach(opt => opt.hidden = true);
+
+            if (!levelId) return;
+
+            allSemOptions.forEach(opt => {
+                opt.hidden = (opt.dataset.level !== levelId);
+            });
+        }
+        function filterModules() {
+            const semId = semSel.value;
+            resetSelect(moduleSel, "-- Select Module / Matiere --");
+
+            allModuleOptions.forEach(opt => opt.hidden = true);
+
+            if (!semId) return;
+
+            allModuleOptions.forEach(opt => {
+                const sems = (opt.dataset.sems || "").split(",").filter(Boolean);
+                opt.hidden = !sems.includes(semId);
+            });
+        }
+
+        yearSel.addEventListener("change", () => {
+            filterLevels();
+            filterSemesters();
+            filterModules();
+        });
+
+        levelSel.addEventListener("change", () => {
+            filterSemesters();
+            filterModules();
+        });
+        semSel.addEventListener("change", () => {
+            filterModules();
+        });
+
+        // initial state: empty until year selected
+        allLevelOptions.forEach(opt => opt.hidden = true);
+        allSemOptions.forEach(opt => opt.hidden = true);
+        allModuleOptions.forEach(opt => opt.hidden = true);
+
+
+        if (window.lucide) lucide.createIcons();
+    })();
+</script>
