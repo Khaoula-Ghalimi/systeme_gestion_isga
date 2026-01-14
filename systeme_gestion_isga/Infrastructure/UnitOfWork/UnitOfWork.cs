@@ -5,6 +5,7 @@ using System.Web;
 using system_gestion_isga.Infrastructure.Repositories.Users;
 using systeme_gestion_isga.Infrastructure.Database;
 using systeme_gestion_isga.Infrastructure.Repositories.AcademicYears;
+using systeme_gestion_isga.Infrastructure.Repositories.Inscription;
 using systeme_gestion_isga.Infrastructure.Repositories.Levels;
 using systeme_gestion_isga.Infrastructure.Repositories.Modules;
 using systeme_gestion_isga.Infrastructure.Repositories.ModuleSubjects;
@@ -40,6 +41,7 @@ namespace systeme_gestion_isga.Infrastructure.UnitOfWork
             ModuleSubjects = new ModuleSubjectRepository(_context);
             SemesterModules = new SemesterModuleRepository(_context);
             TeachingUnits = new TeachingUnitRepository(_context);
+            Inscriptions = new InscriptionRepository(_context);
         }
 
         // Optional parameterless ctor (if you’re not using DI yet)
@@ -64,6 +66,7 @@ namespace systeme_gestion_isga.Infrastructure.UnitOfWork
         public ISemesterModuleRepository SemesterModules { get; private set; }
 
         public ITeachingUnitRepository TeachingUnits { get; private set; }
+        public IInscriptionRepository Inscriptions { get; private set; }
 
 
         public int Save()

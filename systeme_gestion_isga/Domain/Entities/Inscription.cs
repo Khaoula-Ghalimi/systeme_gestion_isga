@@ -19,20 +19,20 @@ namespace systeme_gestion_isga.Domain.Entities
         public virtual Student Student { get; set; }
 
 
-        [Required]
-        public int AcademicYearId { get; set; }
-        [ForeignKey(nameof(AcademicYearId))]
-        public virtual AcademicYear AcademicYear { get; set; }
+        //[Required]
+        //public int AcademicYearId { get; set; }
+        //[ForeignKey(nameof(AcademicYearId))]
+        //public virtual AcademicYear AcademicYear { get; set; }
+
+        ////[Required]
+        ////public int ProgramId { get; set; }
+        ////[ForeignKey(nameof(ProgramId))]
+        ////public virtual Program Program { get; set; }
 
         //[Required]
-        //public int ProgramId { get; set; }
-        //[ForeignKey(nameof(ProgramId))]
-        //public virtual Program Program { get; set; }
-
-        [Required]
-        public int ProgramAcademicYearId { get; set; }
-        [ForeignKey(nameof(ProgramAcademicYearId))]
-        public virtual ProgramAcademicYear ProgramAcademicYear { get; set; }
+        //public int ProgramAcademicYearId { get; set; }
+        //[ForeignKey(nameof(ProgramAcademicYearId))]
+        //public virtual ProgramAcademicYear ProgramAcademicYear { get; set; }
 
         [Required]
         public int LevelId { get; set; }

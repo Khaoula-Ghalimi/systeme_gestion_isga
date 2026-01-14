@@ -1,0 +1,194 @@
+﻿@model systeme_gestion_isga.Features.Inscription.ViewModels.InscriptionVM
+
+@{
+    ViewBag.Title = "Edit an Inscription";
+    var payToYear = (Dictionary<int, int>)ViewBag.ProgramAcademicYearToAcademicYear; // PAY -> AcademicYearId
+    var levelToPay = (Dictionary<int, int>)ViewBag.LevelToProgramAcademicYear;       // Level -> PAY Id
+}
+
+<div class="container-fluid p-4">
+    <div class="d-flex align-content-center justify-content-between mb-5">
+        <h4 class="fw-bold text-white mb-0">Edit An Inscription</h4>
+        <a href='@Url.Action("Index")' class="btn btn-outline-light">
+            <i data-lucide="arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="card border bg-body-tertiary">
+        <div class="card-body p-4">
+            @using (Html.BeginForm("Edit", "Inscription", FormMethod.Post, new { @class = "row g-3" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(m => m.Id)
+
+                <!-- Academic Year -->
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.AcademicYearId)</label>
+                    @Html.DropDownListFor(
+                        m => m.AcademicYearId,
+                        Model.AcademicYears,
+                        "-- Select Academic Year --",
+                        new { @class = "form-select", id = "AcademicYearId" }
+                    )
+                    @Html.ValidationMessageFor(m => m.AcademicYearId, "", new { @class = "text-danger small" })
+                </div>
+
+                <!-- Program (ProgramAcademicYear) -->
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.ProgramAcademicYearId)</label>
+
+                    <select id="ProgramAcademicYearId" name="ProgramAcademicYearId" class="form-select">
+                        <option value="">-- Select Program --</option>
+
+                        @foreach (var p in Model.ProgramAcademicYears)
+                        {
+                            var payId = int.Parse(p.Value);
+                            var yearId = payToYear[payId];
+
+                            var selected = (Model.ProgramAcademicYearId.HasValue && Model.ProgramAcademicYearId.Value.ToString() == p.Value)
+                                ? "selected"
+                                : "";
+
+                            <option value="@p.Value" data-year="@yearId" @selected>@p.Text</option>
+                        }
+                    </select>
+
+                    @Html.ValidationMessageFor(m => m.ProgramAcademicYearId, "", new { @class = "text-danger small" })
+                </div>
+
+                <!-- Level -->
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.LevelId)</label>
+
+                    <select id="LevelId" name="LevelId" class="form-select">
+                        <option value="">-- Select Level --</option>
+
+                        @foreach (var l in Model.Levels)
+                        {
+                            var levelId = int.Parse(l.Value);
+                            var payId = levelToPay[levelId];
+
+                            var selected = (Model.LevelId.HasValue && Model.LevelId.Value.ToString() == l.Value)
+                                ? "selected"
+                                : "";
+
+                            <option value="@l.Value" data-pay="@payId" @selected>@l.Text</option>
+                        }
+                    </select>
+
+                    @Html.ValidationMessageFor(m => m.LevelId, "", new { @class = "text-danger small" })
+                </div>
+
+                <!-- Student -->
+                <div class="col-md-6">
+                    <label class="form-label text-white">@Html.DisplayNameFor(m => m.StudentId)</label>
+
+                    @Html.DropDownListFor(
+                        m => m.StudentId,
+                        Model.Students,
+                        "-- Select Student --",
+                        new { @class = "form-select", id = "StudentId" }
+                    )
+
+                    @Html.ValidationMessageFor(m => m.StudentId, "", new { @class = "text-danger small" })
+                </div>
+
+                <!-- Inscription Date -->
+                <div class="col-md-6">
+                    @Html.LabelFor(m => m.InscriptionDate, new { @class = "form-label text-white" })
+                    @Html.TextBoxFor(m => m.InscriptionDate, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                    @Html.ValidationMessageFor(m => m.InscriptionDate, "", new { @class = "text-danger small" })
+                </div>
+
+                <div class="col-12 d-flex gap-2 mt-5 justify-content-end">
+                    <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                        <i data-lucide="x"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" class="btn btn-light">
+                        <i data-lucide="save"></i>
+                        Save Changes
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        (function () {
+            const yearSel = document.getElementById("AcademicYearId");
+            const paySel = document.getElementById("ProgramAcademicYearId");
+            const levelSel = document.getElementById("LevelId");
+
+            const allPayOptions = Array.from(paySel.querySelectorAll("option")).slice(1);
+            const allLevelOptions = Array.from(levelSel.querySelectorAll("option")).slice(1);
+
+            function resetSelect(selectEl, placeholder) {
+                // keep current selection when we're just filtering? for edit we still reset only when parent changes
+                if (selectEl.options.length > 0) selectEl.options[0].textContent = placeholder;
+            }
+
+            function filterPrograms() {
+                const yearId = yearSel.value;
+
+                // show/hide programs
+                allPayOptions.forEach(opt => opt.hidden = true);
+
+                if (!yearId) return;
+
+                allPayOptions.forEach(opt => {
+                    opt.hidden = (opt.dataset.year !== yearId);
+                });
+            }
+
+            function filterLevels() {
+                const payId = paySel.value;
+
+                allLevelOptions.forEach(opt => opt.hidden = true);
+
+                if (!payId) return;
+
+                allLevelOptions.forEach(opt => {
+                    opt.hidden = (opt.dataset.pay !== payId);
+                });
+            }
+
+            yearSel.addEventListener("change", () => {
+                // if year changes, program + level should reset
+                paySel.value = "";
+                levelSel.value = "";
+                resetSelect(paySel, "-- Select Program --");
+                resetSelect(levelSel, "-- Select Level --");
+
+                filterPrograms();
+                filterLevels();
+            });
+
+            paySel.addEventListener("change", () => {
+                // if program changes, level should reset
+                levelSel.value = "";
+                resetSelect(levelSel, "-- Select Level --");
+
+                filterLevels();
+            });
+
+            // Initial filtering for Edit:
+            // 1) filter programs based on the already-selected year
+            // 2) filter levels based on the already-selected program
+            filterPrograms();
+            filterLevels();
+
+            // If selected options are currently hidden by filtering (safety), unhide them
+            const selectedPay = paySel.options[paySel.selectedIndex];
+            if (selectedPay && selectedPay.value) selectedPay.hidden = false;
+
+            const selectedLevel = levelSel.options[levelSel.selectedIndex];
+            if (selectedLevel && selectedLevel.value) selectedLevel.hidden = false;
+
+            if (window.lucide) lucide.createIcons();
+        })();
+    </script>
+}

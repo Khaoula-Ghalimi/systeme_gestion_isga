@@ -159,6 +159,8 @@
     <Compile Include="Features\Auth\ViewModels\UserVM.cs" />
     <Compile Include="Features\Dashboard\Controllers\DashboardController.cs" />
     <Compile Include="Features\FeatureViewEngine.cs" />
+    <Compile Include="Features\Inscription\Controllers\InscriptionController.cs" />
+    <Compile Include="Features\Inscription\ViewModels\InscritpionVM.cs" />
     <Compile Include="Features\Module\Controllers\ModuleController.cs" />
     <Compile Include="Features\Module\ViewModels\ModuleSubjectVM.cs" />
     <Compile Include="Features\Module\ViewModels\ModuleVM.cs" />
@@ -187,6 +189,8 @@
     <Compile Include="Infrastructure\Repositories\AcademicYears\IAcademicYearRepository.cs" />
     <Compile Include="Infrastructure\Repositories\GenericRepository.cs" />
     <Compile Include="Infrastructure\Repositories\IGenericRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Inscription\IInscriptionRepository.cs" />
+    <Compile Include="Infrastructure\Repositories\Inscription\InscriptionRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Levels\ILevelRepository.cs" />
     <Compile Include="Infrastructure\Repositories\Levels\LevelRepository.cs" />
     <Compile Include="Infrastructure\Repositories\ModuleSubjects\IModuleSubjectRepository.cs" />
@@ -254,6 +258,10 @@
     <Compile Include="Migrations\202601132037452_FixMissingThings.cs" />
     <Compile Include="Migrations\202601132037452_FixMissingThings.Designer.cs">
       <DependentUpon>202601132037452_FixMissingThings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202601141152190_DeleteUncesseceryColumns.cs" />
+    <Compile Include="Migrations\202601141152190_DeleteUncesseceryColumns.Designer.cs">
+      <DependentUpon>202601141152190_DeleteUncesseceryColumns.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -330,6 +338,13 @@
     <Content Include="Features\TeachingUnit\Views\Create.cshtml" />
     <Content Include="Features\TeachingUnit\Views\Index.cshtml" />
     <Content Include="Features\TeachingUnit\Views\Edit.cshtml" />
+    <Content Include="Features\Inscription\Controllers\.gitkeep" />
+    <Content Include="Features\Inscription\ViewModels\.gitkeep" />
+    <Content Include="Features\Inscription\Views\_ViewStart.cshtml" />
+    <Content Include="Features\Inscription\Views\web.config" />
+    <Content Include="Features\Inscription\Views\Create.cshtml" />
+    <Content Include="Features\Inscription\Views\Index.cshtml" />
+    <Content Include="Features\Inscription\Views\Edit.cshtml" />
     <None Include="packages.config" />
     <Content Include="Scripts\bootstrap.min.js.map" />
     <Content Include="Scripts\bootstrap.js.map" />
@@ -386,6 +401,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202601132037452_FixMissingThings.resx">
       <DependentUpon>202601132037452_FixMissingThings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202601141152190_DeleteUncesseceryColumns.resx">
+      <DependentUpon>202601141152190_DeleteUncesseceryColumns.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

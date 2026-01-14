@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using system_gestion_isga.Infrastructure.Repositories.Users;
 using systeme_gestion_isga.Infrastructure.Repositories.AcademicYears;
+using systeme_gestion_isga.Infrastructure.Repositories.Inscription;
 using systeme_gestion_isga.Infrastructure.Repositories.Levels;
 using systeme_gestion_isga.Infrastructure.Repositories.Modules;
 using systeme_gestion_isga.Infrastructure.Repositories.ModuleSubjects;
@@ -38,6 +39,8 @@ namespace systeme_gestion_isga.Infrastructure.UnitOfWork
         ISemesterModuleRepository SemesterModules { get; }
 
         ITeachingUnitRepository TeachingUnits { get; }
+
+        IInscriptionRepository Inscriptions { get; }
 
         int Save();
         void Dispose();

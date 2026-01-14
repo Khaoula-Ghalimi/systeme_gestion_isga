@@ -154,19 +154,19 @@ namespace systeme_gestion_isga.Infrastructure.Database
                 .WillCascadeOnDelete(false);
 
             // Inscription -> AcademicYear (NO cascade)
-            modelBuilder.Entity<Inscription>()
-                .HasRequired(i => i.AcademicYear)
-                .WithMany(y => y.Inscriptions)
-                .HasForeignKey(i => i.AcademicYearId)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<Inscription>()
+            //    .HasRequired(i => i.AcademicYear)
+            //    .WithMany(y => y.Inscriptions)
+            //    .HasForeignKey(i => i.AcademicYearId)
+            //    .WillCascadeOnDelete(false);
 
             // ✅ Inscription -> ProgramAcademicYear (NO cascade)
             // Requires: Inscription.ProgramAcademicYearId + nav
-            modelBuilder.Entity<Inscription>()
-                .HasRequired(i => i.ProgramAcademicYear)
-                .WithMany(pay => pay.Inscriptions) // ProgramAcademicYear.Inscriptions
-                .HasForeignKey(i => i.ProgramAcademicYearId)
-                .WillCascadeOnDelete(false);
+            //modelBuilder.Entity<Inscription>()
+            //    .HasRequired(i => i.ProgramAcademicYear)
+            //    .WithMany(pay => pay.Inscriptions) // ProgramAcademicYear.Inscriptions
+            //    .HasForeignKey(i => i.ProgramAcademicYearId)
+            //    .WillCascadeOnDelete(false);
 
             // Inscription -> Level (NO cascade)
             modelBuilder.Entity<Inscription>()
